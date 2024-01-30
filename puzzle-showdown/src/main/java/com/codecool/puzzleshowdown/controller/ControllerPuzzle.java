@@ -3,12 +3,12 @@ package com.codecool.puzzleshowdown.controller;
 import com.codecool.puzzleshowdown.service.ServicePuzzle;
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.List;
 
 @Controller
 public class ControllerPuzzle {
@@ -21,16 +21,12 @@ public class ControllerPuzzle {
     }
 
     @GetMapping("/api/puzzle")
-    public List<PuzzleDTO> getPuzzle(){
-        return servicePuzzle.getPuzzle();
+    public ResponseEntity<?> getPuzzle(){
+        return ResponseEntity.ok(servicePuzzle.getPuzzle());
     }
 
-    @GetMapping("/api/puzzle/random")
-    public PuzzleDTO getRandomPuzzle(){
-        return servicePuzzle.getRandom();
-    }
     @PatchMapping("/api/puzzle/{puzzleId}")
-    public void giveUpvote(@PathVariable int puzzleId){
+    public void giveUpvote(@PathVariable String puzzleId){
         servicePuzzle.giveUpvoteToPuzzle(puzzleId);
     }
 }

@@ -1,5 +1,8 @@
 package com.codecool.puzzleshowdown.dao;
 
-public interface PuzzleDao {
+import com.codecool.puzzleshowdown.dao.model.Puzzle;
 
+public interface PuzzleDAO {
+    Puzzle getPuzzle();
+    void giveUpVote(String puzzleId);
 }

@@ -1,4 +1,4 @@
 package com.codecool.puzzleshowdown.dto.puzzle;
 
-public record PuzzleDTO(int id, String table, String moves, float rating, float popularity) {
+public record PuzzleDTO(String id, String table, String moves, float rating, float popularity) {
 }
