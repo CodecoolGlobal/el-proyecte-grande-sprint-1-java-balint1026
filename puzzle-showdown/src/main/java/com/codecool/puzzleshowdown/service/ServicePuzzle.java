@@ -7,8 +7,6 @@ import java.util.List;
 
 @Service
 public interface ServicePuzzle {
-    List<PuzzleDTO> getPuzzle();
-    void giveUpvoteToPuzzle(int puzzleId);
-
-    PuzzleDTO getRandom();
+    PuzzleDTO getPuzzle();
+    void giveUpvoteToPuzzle(String puzzleId);
 }
