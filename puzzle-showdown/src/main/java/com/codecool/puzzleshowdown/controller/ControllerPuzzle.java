@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
+
 @Controller
 public class ControllerPuzzle {
 
@@ -19,10 +21,14 @@ public class ControllerPuzzle {
     }
 
     @GetMapping("/api/puzzle")
-    public PuzzleDTO getPuzzle(){
+    public List<PuzzleDTO> getPuzzle(){
         return servicePuzzle.getPuzzle();
     }
 
+    @GetMapping("/api/puzzle/random")
+    public PuzzleDTO getRandomPuzzle(){
+        return servicePuzzle.getRandom();
+    }
     @PatchMapping("/api/puzzle/{puzzleId}")
     public void giveUpvote(@PathVariable int puzzleId){
         servicePuzzle.giveUpvoteToPuzzle(puzzleId);
