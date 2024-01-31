@@ -38,16 +38,17 @@ public class PuzzleService implements ServicePuzzle{
 
     @Override
     public String isValid(String puzzleId, String move, int step) {
-        step--;
-        Puzzle puzzle = puzzleDAO.checkValidMove(puzzleId);
-        String[] moves = puzzle.moves().split(" ");
-        if (moves.length > step && step >= 0){
-            if(moves[step].equals(move)){
-                return moves[++step];
+        try{
+            Puzzle puzzle = puzzleDAO.checkValidMove(puzzleId);
+            String[] moves = puzzle.moves().split(" ");
+            if (step > 0){
+                if(moves[step].equals(move)){
+                    return moves[++step];
+                }
             }
+        }catch (ArrayIndexOutOfBoundsException e){
+            return "win";
         }
-        if (moves.length < step)
-            return "Win";
         return null;
     }
 }

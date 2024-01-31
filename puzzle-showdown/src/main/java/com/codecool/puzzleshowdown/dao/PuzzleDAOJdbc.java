@@ -19,7 +19,7 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
             PreparedStatement stmt = con.prepareStatement("select * from puzzles offset ? limit 1;");
             Random random = new Random();
 
-            int PUZZLE_SIZE = 5000;
+            int PUZZLE_SIZE = 2653;
             stmt.setInt(1, random.nextInt(PUZZLE_SIZE));
             ResultSet rs = stmt.executeQuery();
             while(rs.next())
