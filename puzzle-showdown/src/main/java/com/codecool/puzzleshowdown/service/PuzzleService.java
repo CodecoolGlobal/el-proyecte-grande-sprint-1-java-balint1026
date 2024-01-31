@@ -41,9 +41,13 @@ public class PuzzleService implements ServicePuzzle{
         step--;
         Puzzle puzzle = puzzleDAO.checkValidMove(puzzleId);
         String[] moves = puzzle.moves().split(" ");
-        if(moves[step].equals(move)){
-            return moves[++step];
+        if (moves.length > step && step >= 0){
+            if(moves[step].equals(move)){
+                return moves[++step];
+            }
         }
+        if (moves.length < step)
+            return "Win";
         return null;
     }
 }
