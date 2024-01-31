@@ -11,7 +11,6 @@ import java.util.Random;
 
 public class PuzzleDAOJdbc implements PuzzleDAO {
 
-    private final int PUZZLE_SIZE = 5000;
     @Override
     public Puzzle getPuzzle() {
         Puzzle puzzle = null;
@@ -19,6 +18,8 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
             Connection con = ConnectionDB.getConnection();
             PreparedStatement stmt = con.prepareStatement("select * from puzzles offset ? limit 1;");
             Random random = new Random();
+
+            int PUZZLE_SIZE = 5000;
             stmt.setInt(1, random.nextInt(PUZZLE_SIZE));
             ResultSet rs = stmt.executeQuery();
             while(rs.next())
@@ -33,8 +34,40 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
 
     @Override
     public void giveUpVote(String puzzleId) {
-
+        try {
+            throw new Exception("Not implemented yet");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+
+    @Override
+    public void giveDownVote(String puzzleId) {
+        try {
+            throw new Exception("Not implemented yet");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Puzzle checkValidMove(String puzzleId) {
+        Puzzle puzzle = null;
+        try{
+            Connection con = ConnectionDB.getConnection();
+            PreparedStatement stmt = con.prepareStatement("select * from puzzles where puzzleid = ?;");
+            stmt.setString(1, puzzleId);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next())
+                puzzle = setResult(rs);
+            con.close();
+
+        }catch (SQLException e){
+            System.out.println("Error: " + e);
+        }
+        return puzzle;
+    }
+
     private Puzzle setResult(ResultSet rs) throws SQLException {
         return new Puzzle(rs.getString(1),
                 rs.getString(2),
