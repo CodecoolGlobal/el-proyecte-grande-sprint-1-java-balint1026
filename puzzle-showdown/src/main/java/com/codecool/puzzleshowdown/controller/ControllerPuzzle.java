@@ -30,12 +30,8 @@ public class ControllerPuzzle {
         return servicePuzzle.isValid(puzzleId, move, step);
     }
 
-    @PatchMapping("/api/puzzle/upvote/{puzzleId}")
-    public void giveUpvote(@PathVariable String puzzleId){
-        servicePuzzle.giveUpvoteToPuzzle(puzzleId);
-    }
-    @PatchMapping("/api/puzzle/downvote/{puzzleId}")
-    public void giveDownVote(@PathVariable String puzzleId){
-        servicePuzzle.giveDownvoteToPuzzle(puzzleId);
+    @PatchMapping("/api/puzzle/{puzzleId}/popularity/{vote}")
+    public void givePopularity(@PathVariable String puzzleId, @PathVariable int vote){
+        servicePuzzle.givePopularityToPuzzle(puzzleId, vote);
     }
 }

@@ -27,13 +27,8 @@ public class PuzzleService implements ServicePuzzle{
     }
 
     @Override
-    public void giveUpvoteToPuzzle(String puzzleId) {
-        puzzleDAO.giveUpVote(puzzleId);
-    }
-
-    @Override
-    public void giveDownvoteToPuzzle(String puzzleId) {
-        puzzleDAO.giveDownVote(puzzleId);
+    public void givePopularityToPuzzle(String puzzleId, int vote) {
+        puzzleDAO.givePopularity(puzzleId, vote);
     }
 
     @Override
