@@ -6,9 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ServicePuzzle {
     PuzzleDTO getPuzzle();
-    void giveUpvoteToPuzzle(String puzzleId);
 
-    void giveDownvoteToPuzzle(String puzzleId);
+    void givePopularityToPuzzle(String puzzleId, int vote);
 
     String isValid(String puzzleId, String move, int step);
 }

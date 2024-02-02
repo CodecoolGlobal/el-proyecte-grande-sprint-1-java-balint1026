@@ -33,20 +33,20 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
     }
 
     @Override
-    public void giveUpVote(String puzzleId) {
-        try {
-            throw new Exception("Not implemented yet");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void giveDownVote(String puzzleId) {
-        try {
-            throw new Exception("Not implemented yet");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void givePopularity(String puzzleId, int vote) {
+        try{
+            Connection con = ConnectionDB.getConnection();
+            PreparedStatement stmt = con.prepareStatement(
+                        "update puzzles" +
+                            " set popularity = popularity + ?" +
+                            " where puzzleid = ?;"
+            );
+            stmt.setInt(1, vote);
+            stmt.setString(2, puzzleId);
+            stmt.executeQuery();
+            con.close();
+        }catch (SQLException e){
+            System.out.println("Error: " + e);
         }
     }
 
