@@ -44,7 +44,7 @@ public class PuzzleService{
                 return moves[++step];
             }
         }
-        if (step + 1 == moves.length){
+        if (step + 1 == moves.length && moves[step].equals(move)){
             return "win";
         }
         return null;
