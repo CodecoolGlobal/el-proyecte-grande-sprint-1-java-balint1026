@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PuzzleService implements ServicePuzzle{
+public class PuzzleService{
     private final PuzzleDAO puzzleDAO;
 
     @Autowired
@@ -15,9 +15,8 @@ public class PuzzleService implements ServicePuzzle{
         this.puzzleDAO = puzzleDAO;
     }
 
-    @Override
-    public PuzzleDTO getPuzzle() {
-        Puzzle puzzle = puzzleDAO.getPuzzle();
+    public PuzzleDTO getRandomPuzzle() {
+        Puzzle puzzle = puzzleDAO.getRandomPuzzle();
         return new PuzzleDTO(
                 puzzle.puzzleId(),
                 puzzle.fen(),
@@ -26,15 +25,13 @@ public class PuzzleService implements ServicePuzzle{
                 puzzle.popularity());
     }
 
-    @Override
-    public void givePopularityToPuzzle(String puzzleId, int vote) {
-        puzzleDAO.givePopularity(puzzleId, vote);
+    public void updatePopularity(String puzzleId, int vote) {
+        puzzleDAO.updatePopularity(puzzleId, vote);
     }
 
-    @Override
-    public String isValid(String puzzleId, String move, int step) {
+    public String isValidStep(String puzzleId, String move, int step) {
         try{
-            Puzzle puzzle = puzzleDAO.checkValidMove(puzzleId);
+            Puzzle puzzle = puzzleDAO.getPuzzle(puzzleId);
             String[] moves = puzzle.moves().split(" ");
             if (step > 0){
                 if(moves[step].equals(move)){
