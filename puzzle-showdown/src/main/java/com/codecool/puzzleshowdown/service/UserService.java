@@ -4,6 +4,7 @@ import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
+import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
@@ -23,7 +24,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User saveUser(UserRegistrationDTO userRegistration){
+    public UserLoginResponseDTO saveUser(UserRegistrationDTO userRegistration){
         try{
             User user = new User(
                     userRegistration.firstName(),
@@ -33,7 +34,9 @@ public class UserService {
                     userRegistration.password()
             );
 
-            return userRepository.save(user);
+
+            UserLoginResponseDTO userLoginResponseDTO = new UserLoginResponseDTO(user.getUserName(), user.getImage());
+            return userLoginResponseDTO;
         } catch (Exception e){
             System.out.println(e.getMessage());
             if (e.getMessage().contains("duplicate key value")){
