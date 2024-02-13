@@ -1,8 +1,6 @@
 package com.codecool.puzzleshowdown.repository.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "puzzles")
@@ -18,6 +16,8 @@ public class Puzzle {
     private String themes;
     private String gameurl;
     private String openingtags;
+    @ManyToOne
+    private User user;
 
     public Puzzle() {
 
