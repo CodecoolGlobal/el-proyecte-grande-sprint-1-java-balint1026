@@ -2,10 +2,12 @@ package com.codecool.puzzleshowdown.service;
 
 import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
+import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
+import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +35,13 @@ public class UserService {
 
             return userRepository.save(user);
         } catch (Exception e){
-            throw new AlreadyExistingUserException(userRegistration.userName());
+            System.out.println(e.getMessage());
+            if (e.getMessage().contains("duplicate key value")){
+                throw new AlreadyExistingUserException(userRegistration.email());
+            }
+            throw new NullValueException();
         }
+
     }
 
     public boolean userValidation(UserLoginDTO userLoginDTO){
