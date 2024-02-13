@@ -16,8 +16,8 @@ public class PuzzleService{
         this.puzzleRepository = puzzleRepository;
     }
 
-    public PuzzleDTO getRandomPuzzle() {
-        Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle();
+    public PuzzleDTO getRandomPuzzle(int min, int max) {
+        Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle(min, max);
         if (respond.isEmpty()) return null;
         Puzzle puzzles = respond.get();
         return new PuzzleDTO(
@@ -44,7 +44,7 @@ public class PuzzleService{
                 return moves[++step];
             }
         }
-        if (step + 1 > moves.length){
+        if (step + 1 == moves.length){
             return "win";
         }
         return null;

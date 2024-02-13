@@ -17,8 +17,8 @@ public class ControllerPuzzle {
     }
 
     @GetMapping
-    public PuzzleDTO getPuzzle(){
-        return puzzleService.getRandomPuzzle();
+    public PuzzleDTO getPuzzle(@RequestParam int min, @RequestParam int max){
+        return puzzleService.getRandomPuzzle(min, max);
     }
 
     @GetMapping("/valid/{puzzleId}/{move}/{step}")
