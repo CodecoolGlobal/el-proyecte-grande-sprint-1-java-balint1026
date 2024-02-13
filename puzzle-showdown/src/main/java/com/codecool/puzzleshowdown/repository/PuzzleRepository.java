@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface PuzzleRepository extends JpaRepository<Puzzle, String> {
-    @Query(value = "SELECT p FROM Puzzle AS p ORDER BY RANDOM() limit 1")
-    Optional<Puzzle> getRandomPuzzle();
+    @Query(value = "SELECT p FROM Puzzle AS p where p.rating between :min and :max ORDER BY RANDOM() limit 1")
+    Optional<Puzzle> getRandomPuzzle(int min, int max);
 }
