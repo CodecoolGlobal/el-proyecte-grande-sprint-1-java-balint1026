@@ -1,4 +1,4 @@
-package com.codecool.puzzleshowdown.dao.model;
+package com.codecool.puzzleshowdown.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

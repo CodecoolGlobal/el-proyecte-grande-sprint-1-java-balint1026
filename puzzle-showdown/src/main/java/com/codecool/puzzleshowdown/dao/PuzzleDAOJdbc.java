@@ -1,6 +1,6 @@
 package com.codecool.puzzleshowdown.dao;
 
-import com.codecool.puzzleshowdown.dao.model.ConnectionDB;
+import com.codecool.puzzleshowdown.database.ConnectionDB;
 import com.codecool.puzzleshowdown.dao.model.Puzzle;
 
 import java.sql.Connection;
@@ -12,7 +12,7 @@ import java.util.Random;
 public class PuzzleDAOJdbc implements PuzzleDAO {
 
     @Override
-    public Puzzle getPuzzle() {
+    public Puzzle getRandomPuzzle() {
         Puzzle puzzle = null;
         try{
             Connection con = ConnectionDB.getConnection();
@@ -33,7 +33,7 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
     }
 
     @Override
-    public void givePopularity(String puzzleId, int vote) {
+    public void updatePopularity(String puzzleId, int vote) {
         try{
             Connection con = ConnectionDB.getConnection();
             PreparedStatement stmt = con.prepareStatement(
@@ -51,7 +51,7 @@ public class PuzzleDAOJdbc implements PuzzleDAO {
     }
 
     @Override
-    public Puzzle checkValidMove(String puzzleId) {
+    public Puzzle getPuzzle(String puzzleId) {
         Puzzle puzzle = null;
         try{
             Connection con = ConnectionDB.getConnection();
