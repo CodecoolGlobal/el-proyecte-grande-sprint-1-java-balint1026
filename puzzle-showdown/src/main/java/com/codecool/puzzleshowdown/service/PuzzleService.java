@@ -1,7 +1,7 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.dao.PuzzleRepository;
-import com.codecool.puzzleshowdown.dao.model.Puzzle;
+import com.codecool.puzzleshowdown.repository.PuzzleRepository;
+import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

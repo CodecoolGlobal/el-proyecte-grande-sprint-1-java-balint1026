@@ -1,4 +1,4 @@
-package com.codecool.puzzleshowdown.dao.model;
+package com.codecool.puzzleshowdown.repository.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
