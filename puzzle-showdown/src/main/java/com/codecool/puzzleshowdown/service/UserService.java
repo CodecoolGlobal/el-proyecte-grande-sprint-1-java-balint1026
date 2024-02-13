@@ -34,7 +34,7 @@ public class UserService {
                     userRegistration.password()
             );
 
-
+            userRepository.save(user);
             UserLoginResponseDTO userLoginResponseDTO = new UserLoginResponseDTO(user.getUserName(), user.getImage());
             return userLoginResponseDTO;
         } catch (Exception e){

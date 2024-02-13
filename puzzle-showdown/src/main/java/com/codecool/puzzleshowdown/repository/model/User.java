@@ -1,5 +1,6 @@
 package com.codecool.puzzleshowdown.repository.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,9 +20,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     long id;
-    @Column(nullable = false)
+
     private String firstName;
-    @Column(nullable = false)
     private String lastName;
     @Column(nullable = false)
     private String userName;
@@ -60,6 +60,8 @@ public class User {
         this.solvedPuzzles = solvedPuzzles;
         this.image = image;
     }
+
+
 
     public long getId() {
         return id;
