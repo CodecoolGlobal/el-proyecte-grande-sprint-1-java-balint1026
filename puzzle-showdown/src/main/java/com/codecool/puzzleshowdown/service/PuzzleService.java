@@ -1,44 +1,50 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.dao.PuzzleDAO;
+import com.codecool.puzzleshowdown.dao.PuzzleRepository;
 import com.codecool.puzzleshowdown.dao.model.Puzzle;
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PuzzleService{
-    private final PuzzleDAO puzzleDAO;
-
+    private final PuzzleRepository puzzleRepository;
     @Autowired
-    public PuzzleService(PuzzleDAO puzzleDAO) {
-        this.puzzleDAO = puzzleDAO;
+    public PuzzleService(PuzzleRepository puzzleRepository) {
+        this.puzzleRepository = puzzleRepository;
     }
 
     public PuzzleDTO getRandomPuzzle() {
-        Puzzle puzzle = puzzleDAO.getRandomPuzzle();
+        Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle();
+        if (respond.isEmpty()) return null;
+        Puzzle puzzles = respond.get();
         return new PuzzleDTO(
-                puzzle.puzzleId(),
-                puzzle.fen(),
-                puzzle.moves().split(" ")[0],
-                puzzle.rating(),
-                puzzle.popularity());
+                puzzles.getPuzzleid(),
+                puzzles.getFen(),
+                puzzles.getMoves().split(" ")[0],
+                puzzles.getRating(),
+                puzzles.getPopularity());
     }
 
     public void updatePopularity(String puzzleId, int vote) {
-        puzzleDAO.updatePopularity(puzzleId, vote);
+        //puzzleRepository.updatePopularity(puzzleId, vote);
+        throw new RuntimeException("Not implemented yet");
     }
 
     public String isValidStep(String puzzleId, String move, int step) {
-        try{
-            Puzzle puzzle = puzzleDAO.getPuzzle(puzzleId);
-            String[] moves = puzzle.moves().split(" ");
-            if (step > 0){
-                if(moves[step].equals(move)){
-                    return moves[++step];
-                }
+        Optional<Puzzle> respond = puzzleRepository.findById(puzzleId);
+        if (respond.isEmpty()) return null;
+
+        Puzzle puzzle = respond.get();
+        String[] moves = puzzle.getMoves().split(" ");
+        if (step > 0 && step + 1 < moves.length){
+            if(moves[step].equals(move)){
+                return moves[++step];
             }
-        }catch (ArrayIndexOutOfBoundsException e){
+        }
+        if (step + 1 > moves.length){
             return "win";
         }
         return null;
