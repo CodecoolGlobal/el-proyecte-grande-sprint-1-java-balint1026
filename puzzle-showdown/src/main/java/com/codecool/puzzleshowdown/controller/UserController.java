@@ -1,5 +1,6 @@
 package com.codecool.puzzleshowdown.controller;
 
+import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
 import com.codecool.puzzleshowdown.model.user.User;
 import com.codecool.puzzleshowdown.service.UserService;
@@ -29,8 +30,13 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    public ResponseEntity<?> loginUser(){
-        return ResponseEntity.ok("ok");
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO){
+        try{
+            boolean isValidLogin = userService.userValidation(userLoginDTO);
+            return ResponseEntity.ok(isValidLogin);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
