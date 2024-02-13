@@ -49,4 +49,14 @@ public class PuzzleService{
         }
         return null;
     }
+
+    public String getHint(String puzzleId, int step){
+        Optional<Puzzle> respond = puzzleRepository.findById(puzzleId);
+        if (respond.isEmpty()) return null;
+        Puzzle puzzle = respond.get();
+        String[] moves = puzzle.getMoves().split(" ");
+
+        return moves[step].substring(0,2);
+
+    }
 }

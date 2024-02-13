@@ -26,6 +26,12 @@ public class ControllerPuzzle {
         return puzzleService.isValidStep(puzzleId, move, step);
     }
 
+    @GetMapping("/hint/{puzzleId}/{moveCount}")
+        public String getHint(@PathVariable String puzzleId, @PathVariable int moveCount){
+        return puzzleService.getHint(puzzleId, moveCount);
+    }
+
+
     @PatchMapping("/{puzzleId}/popularity/{vote}")
     public void givePopularity(@PathVariable String puzzleId, @PathVariable int vote){
         puzzleService.updatePopularity(puzzleId, vote);
