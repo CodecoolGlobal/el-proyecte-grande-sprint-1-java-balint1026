@@ -14,7 +14,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    private User saveUser(UserRegistrationDTO userRegistration){
+    public User saveUser(UserRegistrationDTO userRegistration){
         try{
             User user = new User(
                     userRegistration.firstName(),
