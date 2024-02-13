@@ -1,6 +1,6 @@
-package com.codecool.puzzleshowdown.dao;
+package com.codecool.puzzleshowdown.repository;
 
-import com.codecool.puzzleshowdown.dao.model.Puzzle;
+import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
