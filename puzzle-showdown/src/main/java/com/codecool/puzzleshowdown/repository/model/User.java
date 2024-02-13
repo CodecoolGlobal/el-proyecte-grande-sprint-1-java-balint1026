@@ -1,4 +1,4 @@
-package com.codecool.puzzleshowdown.model.user;
+package com.codecool.puzzleshowdown.repository.model;
 
 import jakarta.persistence.*;
 

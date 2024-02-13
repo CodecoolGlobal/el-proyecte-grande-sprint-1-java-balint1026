@@ -4,7 +4,7 @@ import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
-import com.codecool.puzzleshowdown.model.user.User;
+import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

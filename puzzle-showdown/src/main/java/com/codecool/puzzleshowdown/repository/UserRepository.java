@@ -1,6 +1,6 @@
 package com.codecool.puzzleshowdown.repository;
 
-import com.codecool.puzzleshowdown.model.user.User;
+import com.codecool.puzzleshowdown.repository.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

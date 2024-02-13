@@ -2,7 +2,6 @@ package com.codecool.puzzleshowdown.controller;
 
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
-import com.codecool.puzzleshowdown.model.user.User;
 import com.codecool.puzzleshowdown.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
