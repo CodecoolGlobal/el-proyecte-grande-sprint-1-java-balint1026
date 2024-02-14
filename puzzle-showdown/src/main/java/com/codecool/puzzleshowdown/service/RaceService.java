@@ -1,8 +1,6 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.repository.GameRepository;
-import com.codecool.puzzleshowdown.repository.PuzzleRepository;
-import com.codecool.puzzleshowdown.repository.UserRepository;
+import com.codecool.puzzleshowdown.repository.RaceRepository;
 import com.codecool.puzzleshowdown.repository.model.Game;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.User;
@@ -14,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class GameService {
-    private GameRepository gameRepository;
-    private UserService userService;
-    private PuzzleService puzzleService;
+public class RaceService {
+    private final RaceRepository raceRepository;
+    private final UserService userService;
+    private final PuzzleService puzzleService;
 
     @Autowired
-    public GameService(GameRepository gameRepository, UserService userService, PuzzleService puzzleService) {
-        this.gameRepository = gameRepository;
+    public RaceService(RaceRepository raceRepository, UserService userService, PuzzleService puzzleService) {
+        this.raceRepository = raceRepository;
         this.userService = userService;
         this.puzzleService = puzzleService;
 
@@ -30,7 +28,7 @@ public class GameService {
     public void uploadGame(List<Long> playersId, List<String> puzzlesId){
         List<User> users = getUsersById(playersId);
         Game game = new Game(users, users.getFirst(), LocalDate.now(), getPuzzles(puzzlesId));
-        gameRepository.save(game);
+        raceRepository.save(game);
     }
 
     private List<Puzzle> getPuzzles(List<String> puzzlesId) {
