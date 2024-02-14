@@ -2,6 +2,8 @@ package com.codecool.puzzleshowdown.repository.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "puzzles")
 public class Puzzle {
@@ -16,8 +18,9 @@ public class Puzzle {
     private String themes;
     private String gameurl;
     private String openingtags;
-    @ManyToOne
-    private User user;
+    @OneToMany
+    @JoinColumn(name="solvedPuzzles", nullable=true)
+    private List<User> users;
 
     public Puzzle() {
 
