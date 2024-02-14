@@ -52,7 +52,7 @@ public class UserService {
 
     }
 
-    public boolean userValidation(UserLoginDTO userLoginDTO){
+    public UserLoginDTO userValidation(UserLoginDTO userLoginDTO){
         Optional<User> optionalUser = getUserData(userLoginDTO.authenticator());
         if(optionalUser.isEmpty()){
             throw new NonExistingUserException(userLoginDTO.authenticator());
@@ -60,9 +60,9 @@ public class UserService {
 
         User searchedUser = optionalUser.get();
         if(userLoginDTO.password().equals(searchedUser.getPassword())){
-            return true;
+            return new UserLoginDTO(searchedUser.getUserName(), searchedUser.getPassword());
         }
-        return false;
+        throw new NonExistingUserException(userLoginDTO.authenticator());
     }
 
     public Optional<User> getUserData(String authenticator) {
