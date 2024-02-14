@@ -17,7 +17,7 @@ public class ControllerPuzzle {
     }
 
     @GetMapping
-    public PuzzleDTO getPuzzle(@RequestParam int min, @RequestParam int max){
+    public PuzzleDTO getRandomPuzzle(@RequestParam int min, @RequestParam int max){
         return puzzleService.getRandomPuzzle(min, max);
     }
 
@@ -33,7 +33,7 @@ public class ControllerPuzzle {
 
 
     @PatchMapping("/{puzzleId}/popularity/{vote}")
-    public void givePopularity(@PathVariable String puzzleId, @PathVariable int vote){
+    public void updatePopularity(@PathVariable String puzzleId, @PathVariable int vote){
         puzzleService.updatePopularity(puzzleId, vote);
     }
 }
