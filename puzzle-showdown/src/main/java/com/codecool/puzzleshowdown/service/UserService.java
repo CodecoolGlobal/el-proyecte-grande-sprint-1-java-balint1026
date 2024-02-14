@@ -59,7 +59,7 @@ public class UserService {
         if(userLoginDTO.password().equals(searchedUser.getPassword())){
             return new UserLoginResponseDTO(searchedUser.getUserName(), searchedUser.getImage());
         }
-        throw new NonExistingUserException(userLoginDTO.authenticator());
+        throw new IncorrectPasswordException();
     }
 
     public Optional<User> getUserData(String authenticator) {
