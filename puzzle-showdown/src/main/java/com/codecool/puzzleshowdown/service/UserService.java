@@ -73,4 +73,9 @@ public class UserService {
         String emailRegex = "^(.+)@(\\S+) $.";
         return Pattern.compile(emailRegex).matcher(userAuthenticator).matches();
     }
+
+    public User getUser(long id) {
+        Optional<User> respond = userRepository.findById(id);
+        return respond.orElse(null);
+    }
 }
