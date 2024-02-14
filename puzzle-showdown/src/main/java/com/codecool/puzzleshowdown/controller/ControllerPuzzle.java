@@ -17,14 +17,20 @@ public class ControllerPuzzle {
     }
 
     @GetMapping
-    public PuzzleDTO getPuzzle(){
-        return puzzleService.getRandomPuzzle();
+    public PuzzleDTO getPuzzle(@RequestParam int min, @RequestParam int max){
+        return puzzleService.getRandomPuzzle(min, max);
     }
 
     @GetMapping("/valid/{puzzleId}/{move}/{step}")
     public String checkValidMove(@PathVariable String puzzleId, @PathVariable String move, @PathVariable int step){
         return puzzleService.isValidStep(puzzleId, move, step);
     }
+
+    @GetMapping("/hint/{puzzleId}/{moveCount}")
+        public String getHint(@PathVariable String puzzleId, @PathVariable int moveCount){
+        return puzzleService.getHint(puzzleId, moveCount);
+    }
+
 
     @PatchMapping("/{puzzleId}/popularity/{vote}")
     public void givePopularity(@PathVariable String puzzleId, @PathVariable int vote){

@@ -65,7 +65,7 @@ public class UserService {
         return false;
     }
 
-    private Optional<User> getUserData(String authenticator) {
+    public Optional<User> getUserData(String authenticator) {
         boolean isEmail = emailValidator(authenticator);
         if(isEmail){
             return userRepository.findByEmail(authenticator);

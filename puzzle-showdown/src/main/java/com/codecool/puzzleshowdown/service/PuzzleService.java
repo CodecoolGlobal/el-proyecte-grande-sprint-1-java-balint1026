@@ -16,8 +16,8 @@ public class PuzzleService{
         this.puzzleRepository = puzzleRepository;
     }
 
-    public PuzzleDTO getRandomPuzzle() {
-        Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle();
+    public PuzzleDTO getRandomPuzzle(int min, int max) {
+        Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle(min, max);
         if (respond.isEmpty()) return null;
         Puzzle puzzles = respond.get();
         return new PuzzleDTO(
@@ -44,9 +44,19 @@ public class PuzzleService{
                 return moves[++step];
             }
         }
-        if (step + 1 > moves.length){
+        if (step + 1 == moves.length && moves[step].equals(move)){
             return "win";
         }
         return null;
+    }
+
+    public String getHint(String puzzleId, int step){
+        Optional<Puzzle> respond = puzzleRepository.findById(puzzleId);
+        if (respond.isEmpty()) return null;
+        Puzzle puzzle = respond.get();
+        String[] moves = puzzle.getMoves().split(" ");
+
+        return moves[step].substring(0,2);
+
     }
 }
