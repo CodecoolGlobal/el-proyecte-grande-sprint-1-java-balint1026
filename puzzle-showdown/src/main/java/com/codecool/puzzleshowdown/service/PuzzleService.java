@@ -29,34 +29,40 @@ public class PuzzleService{
     }
 
     public void updatePopularity(String puzzleId, int vote) {
-        //puzzleRepository.updatePopularity(puzzleId, vote);
-        throw new RuntimeException("Not implemented yet");
+        puzzleRepository.updatePuzzleByPuzzleId(puzzleId, vote);
+    }
+
+    private boolean isInIndex(String[] array, int index){
+        return index < array.length && index >= 0;
     }
 
     public String isValidStep(String puzzleId, String move, int step) {
-        Optional<Puzzle> respond = puzzleRepository.findById(puzzleId);
-        if (respond.isEmpty()) return null;
-
-        Puzzle puzzle = respond.get();
-        String[] moves = puzzle.getMoves().split(" ");
-        if (step > 0 && step + 1 < moves.length){
+        String[] moves = getMoves(puzzleId);
+        if (isInIndex(moves, step)){
             if(moves[step].equals(move)){
-                return moves[++step];
+                if (step + 1 == moves.length){
+                    return "win";
+                }
+                return moves[step + 1];
             }
-        }
-        if (step + 1 == moves.length && moves[step].equals(move)){
-            return "win";
         }
         return null;
     }
 
     public String getHint(String puzzleId, int step){
-        Optional<Puzzle> respond = puzzleRepository.findById(puzzleId);
-        if (respond.isEmpty()) return null;
-        Puzzle puzzle = respond.get();
-        String[] moves = puzzle.getMoves().split(" ");
+        String[] moves = getMoves(puzzleId);
+        if (step < moves.length && step >= 0)
+            return moves[step].substring(0,2);
+        return "";
+    }
 
-        return moves[step].substring(0,2);
+    public Puzzle getPuzzleById(String id){
+        Optional<Puzzle> response = puzzleRepository.findById(id);
+        return response.orElse(null);
+    }
 
+    private String[] getMoves(String id){
+        Puzzle puzzle = getPuzzleById(id);
+        return puzzle.getMoves().split(" ");
     }
 }
