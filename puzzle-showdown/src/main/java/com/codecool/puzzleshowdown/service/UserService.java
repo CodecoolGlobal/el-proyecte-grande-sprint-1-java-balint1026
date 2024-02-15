@@ -4,6 +4,7 @@ import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.UserDTO;
+import com.codecool.puzzleshowdown.custom_exception.*;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
@@ -29,6 +30,9 @@ public class UserService {
 
     public UserLoginResponseDTO saveUser(UserRegistrationDTO userRegistration){
         try{
+            if(!emailValidator(userRegistration.email())){
+                throw new InvalidEmailFormatException();
+            }
             User user = new User(
                     "",
                     "",
@@ -45,8 +49,10 @@ public class UserService {
                     user.getImage());
         } catch (Exception e){
             System.out.println(e.getMessage());
-            if (e.getMessage().contains("duplicate key value")){
-                throw new AlreadyExistingUserException(userRegistration.email());
+            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
+                throw new AlreadyExistingUserEmailException(userRegistration.email());
+            } else if(e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")){
+                throw new AlreadyExistingUserNameException(userRegistration.userName());
             }
             throw new NullValueException();
         }
@@ -76,7 +82,7 @@ public class UserService {
     }
 
     private boolean emailValidator(String userAuthenticator){
-        String emailRegex = "^(.+)@(\\S+) $.";
+        String emailRegex = ".+\\@.+\\..+";
         return Pattern.compile(emailRegex).matcher(userAuthenticator).matches();
     }
 
