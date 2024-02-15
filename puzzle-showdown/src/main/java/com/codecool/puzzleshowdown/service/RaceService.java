@@ -1,7 +1,7 @@
 package com.codecool.puzzleshowdown.service;
 
 import com.codecool.puzzleshowdown.repository.RaceRepository;
-import com.codecool.puzzleshowdown.repository.model.Game;
+import com.codecool.puzzleshowdown.repository.model.Race;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +27,8 @@ public class RaceService {
 
     public void uploadGame(List<Long> playersId, List<String> puzzlesId){
         List<User> users = getUsersById(playersId);
-        Game game = new Game(users, users.getFirst(), LocalDate.now(), getPuzzles(puzzlesId));
-        raceRepository.save(game);
+        Race race = new Race(users, users.getFirst(), LocalDate.now(), getPuzzles(puzzlesId));
+        raceRepository.save(race);
     }
 
     private List<Puzzle> getPuzzles(List<String> puzzlesId) {

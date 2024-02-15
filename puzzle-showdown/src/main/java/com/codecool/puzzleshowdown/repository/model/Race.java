@@ -2,13 +2,12 @@ package com.codecool.puzzleshowdown.repository.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "games")
-public class Game {
+@Table(name = "races")
+public class Race {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
@@ -20,10 +19,10 @@ public class Game {
     @ManyToMany
     private List<Puzzle> puzzles;
 
-    public Game() {
+    public Race() {
     }
 
-    public Game(List<User> players, User winner, LocalDate date, List<Puzzle> puzzles) {
+    public Race(List<User> players, User winner, LocalDate date, List<Puzzle> puzzles) {
         this.players = players;
         this.winner = winner;
         this.date = date;
