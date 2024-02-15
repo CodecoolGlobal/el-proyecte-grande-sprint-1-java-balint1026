@@ -1,6 +1,5 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.UserDTO;
