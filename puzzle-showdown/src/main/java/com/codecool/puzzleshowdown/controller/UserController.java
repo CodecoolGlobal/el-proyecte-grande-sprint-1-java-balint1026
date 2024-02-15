@@ -32,12 +32,9 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO){
         try{
-            /*
-            boolean isValidLogin = userService.userValidation(userLoginDTO);
-            return ResponseEntity.ok(isValidLogin);
-            */
-            // TESTING PURPOSES
-            return ResponseEntity.ok(new UserLoginResponseDTO("lmate","default"));
+            UserLoginResponseDTO userCheckerResponse = userService.userValidation(userLoginDTO);
+            return ResponseEntity.ok(userCheckerResponse);
+            //return ResponseEntity.ok(new UserLoginResponseDTO("lmate","default"));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

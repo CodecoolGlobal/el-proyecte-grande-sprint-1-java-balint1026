@@ -1,14 +1,11 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.custom_exception.AlreadyExistingUserException;
-import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
-import com.codecool.puzzleshowdown.custom_exception.NullValueException;
+import com.codecool.puzzleshowdown.custom_exception.*;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
-import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +23,9 @@ public class UserService {
 
     public UserLoginResponseDTO saveUser(UserRegistrationDTO userRegistration){
         try{
+            if(!emailValidator(userRegistration.email())){
+                throw new InvalidEmailFormatException();
+            }
             User user = new User(
                     userRegistration.firstName(),
                     userRegistration.lastName(),
@@ -39,15 +39,17 @@ public class UserService {
             return userLoginResponseDTO;
         } catch (Exception e){
             System.out.println(e.getMessage());
-            if (e.getMessage().contains("duplicate key value")){
-                throw new AlreadyExistingUserException(userRegistration.email());
+            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
+                throw new AlreadyExistingUserEmailException(userRegistration.email());
+            } else if(e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")){
+                throw new AlreadyExistingUserNameException(userRegistration.userName());
             }
             throw new NullValueException();
         }
 
     }
 
-    public boolean userValidation(UserLoginDTO userLoginDTO){
+    public UserLoginResponseDTO userValidation(UserLoginDTO userLoginDTO){
         Optional<User> optionalUser = getUserData(userLoginDTO.authenticator());
         if(optionalUser.isEmpty()){
             throw new NonExistingUserException(userLoginDTO.authenticator());
@@ -55,9 +57,9 @@ public class UserService {
 
         User searchedUser = optionalUser.get();
         if(userLoginDTO.password().equals(searchedUser.getPassword())){
-            return true;
+            return new UserLoginResponseDTO(searchedUser.getUserName(), searchedUser.getImage());
         }
-        return false;
+        throw new IncorrectPasswordException();
     }
 
     public Optional<User> getUserData(String authenticator) {
@@ -70,7 +72,7 @@ public class UserService {
     }
 
     private boolean emailValidator(String userAuthenticator){
-        String emailRegex = "^(.+)@(\\S+) $.";
+        String emailRegex = ".+\\@.+\\..+";
         return Pattern.compile(emailRegex).matcher(userAuthenticator).matches();
     }
 }
