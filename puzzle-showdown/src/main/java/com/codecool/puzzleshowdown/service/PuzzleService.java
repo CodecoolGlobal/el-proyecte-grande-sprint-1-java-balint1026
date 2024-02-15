@@ -1,25 +1,39 @@
 package com.codecool.puzzleshowdown.service;
 
 import com.codecool.puzzleshowdown.repository.PuzzleRepository;
+import com.codecool.puzzleshowdown.repository.UserRepository;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
+import com.codecool.puzzleshowdown.repository.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class PuzzleService{
     private final PuzzleRepository puzzleRepository;
+    private final UserRepository userRepository;
     @Autowired
-    public PuzzleService(PuzzleRepository puzzleRepository) {
+    public PuzzleService(PuzzleRepository puzzleRepository, UserRepository userRepository) {
         this.puzzleRepository = puzzleRepository;
+        this.userRepository = userRepository;
     }
 
     public PuzzleDTO getRandomPuzzle(int min, int max) {
         Optional<Puzzle> respond = puzzleRepository.getRandomPuzzle(min, max);
         if (respond.isEmpty()) return null;
         Puzzle puzzles = respond.get();
+        return new PuzzleDTO(
+                puzzles.getPuzzleid(),
+                puzzles.getFen(),
+                puzzles.getMoves().split(" ")[0],
+                puzzles.getRating(),
+                puzzles.getPopularity());
+    }
+    private PuzzleDTO createPuzzleDTO(Puzzle puzzles){
         return new PuzzleDTO(
                 puzzles.getPuzzleid(),
                 puzzles.getFen(),
@@ -47,6 +61,20 @@ public class PuzzleService{
             }
         }
         return null;
+    }
+
+    public PuzzleDTO getPuzzleForUser(long userId, int min, int max){
+        Optional<User> respond = userRepository.findById(userId);
+        if (respond.isEmpty()){
+            return null;
+        }
+        User user = respond.get();
+        List<Puzzle> puzzles = puzzleRepository.findAll();
+        List<Puzzle> filteredPuzzles = puzzles.stream()
+                .filter(puzzle -> !user.getSolvedPuzzles().contains(puzzle.getPuzzleid()))
+                .filter(puzzle -> puzzle.getRating() >= min && puzzle.getRating() <= max).toList();
+        Random random = new Random();
+        return createPuzzleDTO(filteredPuzzles.get(random.nextInt(filteredPuzzles.size())));
     }
 
     public String getHint(String puzzleId, int step){

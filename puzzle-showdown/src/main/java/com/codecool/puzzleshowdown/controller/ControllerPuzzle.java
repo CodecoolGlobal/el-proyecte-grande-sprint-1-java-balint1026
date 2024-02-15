@@ -15,12 +15,15 @@ public class ControllerPuzzle {
     public ControllerPuzzle(PuzzleService puzzleService) {
         this.puzzleService = puzzleService;
     }
-
     @GetMapping
-    public PuzzleDTO getRandomPuzzle(@RequestParam int min, @RequestParam int max){
+    public PuzzleDTO getRandomPuzzleByRating(@RequestParam(defaultValue = "0") int min, @RequestParam(defaultValue = "10000") int max){
         return puzzleService.getRandomPuzzle(min, max);
     }
 
+    @GetMapping("/random/{userId}")
+    public PuzzleDTO getRandomPuzzleForUser(@PathVariable long userId,@RequestParam int min, @RequestParam int max){
+        return puzzleService.getPuzzleForUser(userId, min, max);
+    }
     @GetMapping("/valid/{puzzleId}/{move}/{step}")
     public String checkValidMove(@PathVariable String puzzleId, @PathVariable String move, @PathVariable int step){
         return puzzleService.isValidStep(puzzleId, move, step);
