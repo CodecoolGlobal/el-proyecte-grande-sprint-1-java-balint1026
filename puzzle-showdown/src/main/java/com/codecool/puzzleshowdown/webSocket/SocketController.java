@@ -1,6 +1,7 @@
 package com.codecool.puzzleshowdown.webSocket;
 
 import java.io.IOException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.json.JSONObject;
@@ -10,9 +11,11 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 @Component
-public class SocketControllerPuzzle extends TextWebSocketHandler {
+public class SocketController extends TextWebSocketHandler {
 
-    public void handleTextMessage(WebSocketSession session, TextMessage input) throws InterruptedException, IOException {
+    private final ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+
+    public void handleTextMessage(WebSocketSession socketSession, TextMessage input) throws IOException {
         JSONObject request = new JSONObject(input.getPayload());
 
         JSONObject body = new JSONObject();
@@ -20,18 +23,17 @@ public class SocketControllerPuzzle extends TextWebSocketHandler {
             body = new JSONObject(request.get("body").toString());
         }
 
+        // Get key of body
         //System.out.println(body.get("lol"));
 
-        ObjectWriter objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-
         switch (request.getString("endpoint")) {
-            /*case "getPuzzle":
-                session.sendMessage(new TextMessage(objectWriter.writeValueAsString(new SocketDTO("getPuzzle", objectWriter.writeValueAsString(puzzleService.getPuzzle())))));
-                break;*/
             case "test":
-                session.sendMessage(new TextMessage(objectWriter.writeValueAsString(new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(), "Hello World"))));
+                sendSocketMessage(socketSession, new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(), "{\"valami\": \"semmi\"}"));
                 break;
         }
     }
 
+    public void sendSocketMessage(WebSocketSession socketSession, SocketDTO message) throws IOException {
+        socketSession.sendMessage(new TextMessage(objectWriter.writeValueAsString(message)));
+    }
 }
