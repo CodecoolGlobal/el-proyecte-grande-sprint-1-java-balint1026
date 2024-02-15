@@ -1,4 +1,4 @@
 package com.codecool.puzzleshowdown.dto.user;
 
-public record UserLoginResponseDTO(String userName, String image) {
+public record UserLoginResponseDTO(long userId, String userName, String password, String image) {
 }

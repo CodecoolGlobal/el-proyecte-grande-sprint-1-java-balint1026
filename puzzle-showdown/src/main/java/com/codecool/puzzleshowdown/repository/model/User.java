@@ -1,12 +1,8 @@
 package com.codecool.puzzleshowdown.repository.model;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(
@@ -20,7 +16,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     long id;
-
     private String firstName;
     private String lastName;
     @Column(nullable = false)
@@ -32,8 +27,8 @@ public class User {
     private int rating;
     @Column(columnDefinition = "TEXT")
     private String image;
-    @ManyToOne
-    private Puzzle solvedPuzzles;
+    @OneToMany
+    private List<Puzzle> solvedPuzzles;
 
 
     public User() {
@@ -50,7 +45,7 @@ public class User {
         this.image = "default";
     }
 
-    public User(String firstName, String lastName, String userName, String email, String password, int rating, String image, Puzzle solvedPuzzles) {
+    public User(String firstName, String lastName, String userName, String email, String password, int rating, String image, List<Puzzle> solvedPuzzles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.userName = userName;
@@ -125,11 +120,11 @@ public class User {
         this.image = image;
     }
 
-    public Puzzle getSolvedPuzzles() {
+    public List<Puzzle> getSolvedPuzzles() {
         return solvedPuzzles;
     }
 
-    public void setSolvedPuzzles(Puzzle solvedPuzzles) {
+    public void setSolvedPuzzles(List<Puzzle> solvedPuzzles) {
         this.solvedPuzzles = solvedPuzzles;
     }
 }

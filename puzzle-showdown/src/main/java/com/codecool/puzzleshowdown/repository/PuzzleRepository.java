@@ -13,7 +13,6 @@ import java.util.Optional;
 public interface PuzzleRepository extends JpaRepository<Puzzle, String> {
     @Query(value = "SELECT p FROM Puzzle AS p where p.rating between :min and :max ORDER BY RANDOM() limit 1")
     Optional<Puzzle> getRandomPuzzle(int min, int max);
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE Puzzle p SET p.popularity = p.popularity + :newValue WHERE p.puzzleid = :id")

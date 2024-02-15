@@ -1,5 +1,7 @@
 package com.codecool.puzzleshowdown.controller;
 
+import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
+import com.codecool.puzzleshowdown.dto.user.UserDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
@@ -19,6 +21,10 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/{userId}")
+    public UserDTO getUserById(@PathVariable long userId){
+        return userService.getUserById(userId);
+    }
     @PostMapping("/registration")
     public ResponseEntity<?> saveUser(@RequestBody UserRegistrationDTO userRegistrationDTO){
         try{
@@ -29,14 +35,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO){
-        try{
-            UserLoginResponseDTO userCheckerResponse = userService.userValidation(userLoginDTO);
-            return ResponseEntity.ok(userCheckerResponse);
-            //return ResponseEntity.ok(new UserLoginResponseDTO("lmate","default"));
-        } catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+    @GetMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestParam String name, @RequestParam String pass){
+        try {
+            UserLoginDTO userLoginDTO = new UserLoginDTO(name, pass);
+            UserLoginResponseDTO validUser = userService.userValidation(userLoginDTO);
+            return ResponseEntity.ok().body(validUser);
+        }catch (NonExistingUserException non){
+            return ResponseEntity.badRequest().body(non);
         }
     }
 
@@ -50,5 +56,13 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PatchMapping("/rating/{userId}")
+    public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
+        return userService.patchRating(userId, rating);
+    }
 
+    @PutMapping("/savePuzzle/{userId}/{puzzleId}")
+    public void postPuzzleToUser( @PathVariable long userId, @PathVariable String puzzleId){
+        userService.savePuzzleToUser(userId, puzzleId);
+    }
 }

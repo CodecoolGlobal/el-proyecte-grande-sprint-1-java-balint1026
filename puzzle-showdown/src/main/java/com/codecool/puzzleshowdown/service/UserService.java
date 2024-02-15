@@ -1,9 +1,13 @@
 package com.codecool.puzzleshowdown.service;
 
+import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
+import com.codecool.puzzleshowdown.custom_exception.NullValueException;
+import com.codecool.puzzleshowdown.dto.user.UserDTO;
 import com.codecool.puzzleshowdown.custom_exception.*;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
+import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +19,12 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PuzzleService puzzleService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PuzzleService puzzleService) {
         this.userRepository = userRepository;
+        this.puzzleService = puzzleService;
     }
 
     public UserLoginResponseDTO saveUser(UserRegistrationDTO userRegistration){
@@ -27,16 +33,19 @@ public class UserService {
                 throw new InvalidEmailFormatException();
             }
             User user = new User(
-                    userRegistration.firstName(),
-                    userRegistration.lastName(),
+                    "",
+                    "",
                     userRegistration.userName(),
                     userRegistration.email(),
                     userRegistration.password()
             );
 
             userRepository.save(user);
-            UserLoginResponseDTO userLoginResponseDTO = new UserLoginResponseDTO(user.getUserName(), user.getImage());
-            return userLoginResponseDTO;
+            return new UserLoginResponseDTO(
+                    user.getId(),
+                    user.getUserName(),
+                    user.getPassword(),
+                    user.getImage());
         } catch (Exception e){
             System.out.println(e.getMessage());
             if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
@@ -55,11 +64,11 @@ public class UserService {
             throw new NonExistingUserException(userLoginDTO.authenticator());
         }
 
-        User searchedUser = optionalUser.get();
-        if(userLoginDTO.password().equals(searchedUser.getPassword())){
-            return new UserLoginResponseDTO(searchedUser.getUserName(), searchedUser.getImage());
+        User user = optionalUser.get();
+        if(userLoginDTO.password().equals(user.getPassword())){
+            return new UserLoginResponseDTO(user.getId(), user.getUserName(), user.getPassword(), user.getImage());
         }
-        throw new IncorrectPasswordException();
+        return null;
     }
 
     public Optional<User> getUserData(String authenticator) {
@@ -79,5 +88,26 @@ public class UserService {
     public User getUser(long id) {
         Optional<User> respond = userRepository.findById(id);
         return respond.orElse(null);
+    }
+    public User getUser(String userName) {
+        Optional<User> respond = userRepository.findByUserName(userName);
+        return respond.orElse(null);
+    }
+
+    public boolean patchRating(long userId, int rating) {
+        return userRepository.updateRating(userId, rating);
+    }
+
+    public void savePuzzleToUser(long userId, String puzzleId) {
+        User user = getUser(userId);
+        Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
+        if (!user.getSolvedPuzzles().contains(puzzle)){
+            user.getSolvedPuzzles().add(puzzle);
+            userRepository.save(user);
+        }
+    }
+    public UserDTO getUserById(long id){
+        User user = getUser(id);
+        return new UserDTO(user.getId(), user.getUserName(), user.getPassword(), user.getSolvedPuzzles());
     }
 }
