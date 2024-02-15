@@ -25,6 +25,7 @@ public class UserController {
     public UserDTO getUserById(@PathVariable long userId){
         return userService.getUserById(userId);
     }
+
     @PostMapping("/registration")
     public ResponseEntity<?> saveUser(@RequestBody UserRegistrationDTO userRegistrationDTO){
         try{
@@ -35,7 +36,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/login")
+    /*@GetMapping("/login")
     public ResponseEntity<?> loginUser(@RequestParam String name, @RequestParam String pass){
         try {
             UserLoginDTO userLoginDTO = new UserLoginDTO(name, pass);
@@ -43,6 +44,16 @@ public class UserController {
             return ResponseEntity.ok().body(validUser);
         }catch (NonExistingUserException non){
             return ResponseEntity.badRequest().body(non);
+        }
+    }*/
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO){
+        try{
+            UserLoginResponseDTO userCheckerResponse = userService.userValidation(userLoginDTO);
+            return ResponseEntity.ok(userCheckerResponse);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -56,6 +67,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PatchMapping("/rating/{userId}")
     public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
         return userService.patchRating(userId, rating);
