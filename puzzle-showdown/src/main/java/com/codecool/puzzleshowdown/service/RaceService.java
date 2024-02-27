@@ -4,12 +4,14 @@ import com.codecool.puzzleshowdown.repository.RaceRepository;
 import com.codecool.puzzleshowdown.repository.model.Race;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.User;
+import com.codecool.puzzleshowdown.stateFul.ActiveRace;
+import com.codecool.puzzleshowdown.stateFul.PlayerInActiveRace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RaceService {
@@ -17,12 +19,49 @@ public class RaceService {
     private final UserService userService;
     private final PuzzleService puzzleService;
 
+    private final Map<String, ActiveRace> activeRaces = new HashMap<>();
+    private final Map<String, String> activeSpectates = new HashMap<>();
+
     @Autowired
     public RaceService(RaceRepository raceRepository, UserService userService, PuzzleService puzzleService) {
         this.raceRepository = raceRepository;
         this.userService = userService;
         this.puzzleService = puzzleService;
+    }
 
+    public boolean isRaceIdValid(String raceId) {
+        return activeRaces.get(raceId) != null;
+    }
+
+    public void addActiveRace(String raceId, String spectateId, ActiveRace activeRace) {
+        activeRaces.put(raceId, activeRace);
+        activeSpectates.put(spectateId, raceId);
+    }
+
+    public ActiveRace getActiveRaceByRaceId(String raceId) {
+        return new ActiveRace(
+                activeRaces.get(raceId).raceId(),
+                activeRaces.get(raceId).spectateId(),
+                activeRaces.get(raceId).hostUsername(),
+                activeRaces.get(raceId).players(),
+                activeRaces.get(raceId).spectators(),
+                activeRaces.get(raceId).timeframe()
+        );
+    }
+
+    public ActiveRace getActiveRaceBySpectateId(String spectateId) {
+        return new ActiveRace(
+                activeRaces.get(activeSpectates.get(spectateId)).raceId(),
+                activeRaces.get(activeSpectates.get(spectateId)).spectateId(),
+                activeRaces.get(activeSpectates.get(spectateId)).hostUsername(),
+                activeRaces.get(activeSpectates.get(spectateId)).players(),
+                activeRaces.get(activeSpectates.get(spectateId)).spectators(),
+                activeRaces.get(activeSpectates.get(spectateId)).timeframe()
+        );
+    }
+
+    public void addPlayerToActiveRace(String raceId, WebSocketSession socketSession, String username) {
+        activeRaces.get(raceId).players().add(new PlayerInActiveRace(socketSession, username));
     }
 
     public void uploadGame(List<Long> playersId, List<String> puzzlesId){
