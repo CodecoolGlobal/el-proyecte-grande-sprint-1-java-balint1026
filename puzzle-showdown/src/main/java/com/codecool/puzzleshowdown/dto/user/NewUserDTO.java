@@ -1,7 +1,7 @@
 package com.codecool.puzzleshowdown.dto.user;
 
-public record UserRegistrationDTO(
-        String userName,
+public record NewUserDTO(
+        String username,
         String email,
         String password
 ) {

@@ -6,11 +6,13 @@ import com.codecool.puzzleshowdown.dto.user.UserDTO;
 import com.codecool.puzzleshowdown.custom_exception.*;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
-import com.codecool.puzzleshowdown.dto.user.UserRegistrationDTO;
+import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
+import com.codecool.puzzleshowdown.repository.model.Role;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,64 +22,44 @@ import java.util.regex.Pattern;
 public class UserService {
     private final UserRepository userRepository;
     private final PuzzleService puzzleService;
+    private final PasswordEncoder encoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PuzzleService puzzleService) {
+    public UserService(UserRepository userRepository, PuzzleService puzzleService, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.puzzleService = puzzleService;
+        this.encoder = encoder;
     }
 
-    public UserLoginResponseDTO saveUser(UserRegistrationDTO userRegistration){
+    public UserLoginResponseDTO saveUser(NewUserDTO newUserDTO){
         try{
-            if(!emailValidator(userRegistration.email())){
+            if(!emailValidator(newUserDTO.email())){
                 throw new InvalidEmailFormatException();
             }
             User user = new User(
-                    "",
-                    "",
-                    userRegistration.userName(),
-                    userRegistration.email(),
-                    userRegistration.password()
+                    newUserDTO.username(),
+                    newUserDTO.email(),
+                    encoder.encode(newUserDTO.password()),
+                    Role.USER
             );
 
-            userRepository.save(user);
+            var newUser = userRepository.save(user);
             return new UserLoginResponseDTO(
-                    user.getId(),
-                    user.getUserName(),
-                    user.getPassword(),
-                    user.getImage());
+                    newUser.getId(),
+                    newUser.username(),
+                    newUser.getPassword(),
+                    newUser.getImage()
+            );
         } catch (Exception e){
             System.out.println(e.getMessage());
             if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
-                throw new AlreadyExistingUserEmailException(userRegistration.email());
+                throw new AlreadyExistingUserEmailException(newUserDTO.email());
             } else if(e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")){
-                throw new AlreadyExistingUserNameException(userRegistration.userName());
+                throw new AlreadyExistingUserNameException(newUserDTO.username());
             }
             throw new NullValueException();
         }
 
-    }
-
-    public UserLoginResponseDTO userValidation(UserLoginDTO userLoginDTO){
-        Optional<User> optionalUser = getUserData(userLoginDTO.authenticator());
-        if(optionalUser.isEmpty()){
-            throw new NonExistingUserException(userLoginDTO.authenticator());
-        }
-
-        User user = optionalUser.get();
-        if(userLoginDTO.password().equals(user.getPassword())){
-            return new UserLoginResponseDTO(user.getId(), user.getUserName(), user.getPassword(), user.getImage());
-        }
-        return null;
-    }
-
-    public Optional<User> getUserData(String authenticator) {
-        boolean isEmail = emailValidator(authenticator);
-        if(isEmail){
-            return userRepository.findByEmail(authenticator);
-        } else {
-            return userRepository.findByUserName(authenticator);
-        }
     }
 
     private boolean emailValidator(String userAuthenticator){
@@ -97,7 +79,6 @@ public class UserService {
     public boolean patchRating(long userId, int rating) {
         return userRepository.updateRating(userId, rating);
     }
-
     public void savePuzzleToUser(long userId, String puzzleId) {
         User user = getUser(userId);
         Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
@@ -108,6 +89,6 @@ public class UserService {
     }
     public UserDTO getUserById(long id){
         User user = getUser(id);
-        return new UserDTO(user.getId(), user.getUserName(), user.getPassword(), user.getSolvedPuzzles());
+        return new UserDTO(user.getId(), user.username(), user.getPassword(), user.getSolvedPuzzles());
     }
 }

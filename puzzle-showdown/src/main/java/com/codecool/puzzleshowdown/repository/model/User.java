@@ -24,6 +24,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    private Role role;
     private int rating;
     @Column(columnDefinition = "TEXT")
     private String image;
@@ -34,12 +35,13 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String userName, String email, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String userName, String email, String password, Role role) {
+        this.firstName = "";
+        this.lastName = "";
         this.userName = userName;
         this.email = email;
         this.password = password;
+        this.role = role;
         this.rating = 0;
         this.solvedPuzzles = null;
         this.image = "default";
@@ -80,7 +82,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getUserName() {
+    public String username() {
         return userName;
     }
 
@@ -102,6 +104,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public int getRating() {
