@@ -42,7 +42,7 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
-        this.rating = 0;
+        this.rating = 1000;
         this.solvedPuzzles = null;
         this.image = "default";
     }
