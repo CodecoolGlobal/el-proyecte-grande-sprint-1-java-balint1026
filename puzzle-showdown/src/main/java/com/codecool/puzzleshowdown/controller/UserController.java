@@ -4,6 +4,7 @@ import com.codecool.puzzleshowdown.dto.user.UserDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
+import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.security.jwt.JwtUtils;
 import com.codecool.puzzleshowdown.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,8 @@ public class UserController {
     @PostMapping("/registration")
     public ResponseEntity<?> createUser(@RequestBody NewUserDTO newUserDTO) {
         try{
-            UserLoginResponseDTO userResponse = userService.saveUser(newUserDTO);
-            return ResponseEntity.ok(userResponse);
+            userService.saveUser(newUserDTO);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -56,8 +57,9 @@ public class UserController {
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        return ResponseEntity.ok(jwt);//returns jwt Token
+        String jwt = jwtUtils.generateJwtToken(authentication); //jwt Token
+        User user = userService.getUser(jwtUtils.getUserNameFromJwtToken(jwt));
+        return ResponseEntity.ok(new UserLoginResponseDTO(user.getId(), user.username() , jwt, user.getImage()));
     }
 
 //    @GetMapping("/profile/{userName}")
