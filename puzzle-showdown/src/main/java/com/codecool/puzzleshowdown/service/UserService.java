@@ -29,9 +29,9 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public UserLoginResponseDTO saveUser(NewUserDTO newUserDTO){
-        try{
-            if(!emailValidator(newUserDTO.email())){
+    public UserLoginResponseDTO saveUser(NewUserDTO newUserDTO) {
+        try {
+            if (!emailValidator(newUserDTO.email())) {
                 throw new InvalidEmailFormatException();
             }
             User user = new User(
@@ -48,11 +48,11 @@ public class UserService {
                     newUser.getPassword(),
                     newUser.getImage()
             );
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
+            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")) {
                 throw new AlreadyExistingUserEmailException(newUserDTO.email());
-            } else if(e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")){
+            } else if (e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")) {
                 throw new AlreadyExistingUserNameException(newUserDTO.username());
             }
             throw new NullValueException();
@@ -60,14 +60,14 @@ public class UserService {
 
     }
 
-    public List<UserLeaderBoard> getUsersByRoleSorted(){
-        List<UserLeaderBoard> usersByRating = userRepository.findByOrderByRatingDesc().stream()
+    public List<UserLeaderBoard> getUsersByRoleSorted() {
+        List<UserLeaderBoard> usersByRating = userRepository.findByOrderByRatingDescUserNameAsc().stream()
                 .map(user -> new UserLeaderBoard(user.getRating(), user.username(), user.getImage()))
                 .toList();
         return usersByRating;
     }
 
-    private boolean emailValidator(String userAuthenticator){
+    private boolean emailValidator(String userAuthenticator) {
         String emailRegex = ".+\\@.+\\..+";
         return Pattern.compile(emailRegex).matcher(userAuthenticator).matches();
     }
@@ -76,6 +76,7 @@ public class UserService {
         Optional<User> respond = userRepository.findById(id);
         return respond.orElse(null);
     }
+
     public User getUser(String userName) {
         Optional<User> respond = userRepository.findByUserName(userName);
         return respond.orElse(null);
@@ -84,15 +85,17 @@ public class UserService {
     public boolean patchRating(long userId, int rating) {
         return userRepository.updateRating(userId, rating);
     }
+
     public void savePuzzleToUser(long userId, String puzzleId) {
         User user = getUser(userId);
         Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
-        if (!user.getSolvedPuzzles().contains(puzzle)){
+        if (!user.getSolvedPuzzles().contains(puzzle)) {
             user.getSolvedPuzzles().add(puzzle);
             userRepository.save(user);
         }
     }
-    public UserDTO getUserById(long id){
+
+    public UserDTO getUserById(long id) {
         User user = getUser(id);
         return new UserDTO(user.getId(), user.username(), user.getPassword(), user.getSolvedPuzzles());
     }

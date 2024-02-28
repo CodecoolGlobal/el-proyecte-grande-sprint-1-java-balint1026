@@ -1,9 +1,6 @@
 package com.codecool.puzzleshowdown.controller;
 
-import com.codecool.puzzleshowdown.dto.user.UserDTO;
-import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
-import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
-import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
+import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.security.jwt.JwtUtils;
 import com.codecool.puzzleshowdown.service.UserService;
@@ -13,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -30,6 +29,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserDTO getUserById(@PathVariable long userId){
         return userService.getUserById(userId);
+    }
+
+    @GetMapping("/leaderboard")
+    public List<UserLeaderBoard> getLeaderBoard(){
+        return userService.getUsersByRoleSorted();
     }
 
 //    @PostMapping("/registration")
