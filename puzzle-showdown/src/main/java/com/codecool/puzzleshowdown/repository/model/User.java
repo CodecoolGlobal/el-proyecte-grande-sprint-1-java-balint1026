@@ -82,7 +82,7 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String username() {
+    public String getUsername() {
         return userName;
     }
 

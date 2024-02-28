@@ -4,6 +4,8 @@ import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.custom_exception.*;
+import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
+import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.Role;
 import com.codecool.puzzleshowdown.repository.model.User;
@@ -29,9 +31,9 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public UserLoginResponseDTO saveUser(NewUserDTO newUserDTO) {
-        try {
-            if (!emailValidator(newUserDTO.email())) {
+    public UserLoginResponseDTO saveUser(NewUserDTO newUserDTO){
+        try{
+            if(!emailValidator(newUserDTO.email())){
                 throw new InvalidEmailFormatException();
             }
             User user = new User(
@@ -44,15 +46,15 @@ public class UserService {
             var newUser = userRepository.save(user);
             return new UserLoginResponseDTO(
                     newUser.getId(),
-                    newUser.username(),
-                    newUser.getPassword(),
-                    newUser.getImage()
+                    newUser.getUsername(),
+                    newUser.getImage(),
+                    newUser.getRating()
             );
-        } catch (Exception e) {
+        } catch (Exception e){
             System.out.println(e.getMessage());
-            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")) {
+            if (e.getMessage().contains("duplicate key value violates unique constraint \"email_unique\"")){
                 throw new AlreadyExistingUserEmailException(newUserDTO.email());
-            } else if (e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")) {
+            } else if(e.getMessage().contains("duplicate key value violates unique constraint \"user_name_unique")){
                 throw new AlreadyExistingUserNameException(newUserDTO.username());
             }
             throw new NullValueException();
@@ -62,7 +64,7 @@ public class UserService {
 
     public List<UserLeaderBoard> getUsersByRoleSorted() {
         List<UserLeaderBoard> usersByRating = userRepository.findByOrderByRatingDescUserNameAsc().stream()
-                .map(user -> new UserLeaderBoard(user.getRating(), user.username(), user.getImage()))
+                .map(user -> new UserLeaderBoard(user.getRating(), user.getUsername(), user.getImage()))
                 .toList();
         return usersByRating;
     }
@@ -85,18 +87,16 @@ public class UserService {
     public boolean patchRating(long userId, int rating) {
         return userRepository.updateRating(userId, rating);
     }
-
     public void savePuzzleToUser(long userId, String puzzleId) {
         User user = getUser(userId);
         Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
-        if (!user.getSolvedPuzzles().contains(puzzle)) {
+        if (!user.getSolvedPuzzles().contains(puzzle)){
             user.getSolvedPuzzles().add(puzzle);
             userRepository.save(user);
         }
     }
-
-    public UserDTO getUserById(long id) {
+    public UserDTO getUserById(long id){
         User user = getUser(id);
-        return new UserDTO(user.getId(), user.username(), user.getPassword(), user.getSolvedPuzzles());
+        return new UserDTO(user.getId(), user.getUsername(), user.getPassword(), user.getSolvedPuzzles());
     }
 }

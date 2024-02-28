@@ -27,6 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (optionalUserEntity.isPresent()) user = optionalUserEntity.get();
         assert user != null;
         SimpleGrantedAuthority role = new SimpleGrantedAuthority(user.getRole().toString());
-        return new org.springframework.security.core.userdetails.User(user.username(), user.getPassword(), Set.of(role));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), Set.of(role));
     }
 }
