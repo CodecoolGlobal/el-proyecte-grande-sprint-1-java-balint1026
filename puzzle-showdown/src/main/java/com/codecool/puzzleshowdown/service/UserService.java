@@ -1,10 +1,8 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.UserDTO;
 import com.codecool.puzzleshowdown.custom_exception.*;
-import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
@@ -46,9 +44,9 @@ public class UserService {
             var newUser = userRepository.save(user);
             return new UserLoginResponseDTO(
                     newUser.getId(),
-                    newUser.username(),
-                    newUser.getPassword(),
-                    newUser.getImage()
+                    newUser.getUsername(),
+                    newUser.getImage(),
+                    newUser.getRating()
             );
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -89,6 +87,6 @@ public class UserService {
     }
     public UserDTO getUserById(long id){
         User user = getUser(id);
-        return new UserDTO(user.getId(), user.username(), user.getPassword(), user.getSolvedPuzzles());
+        return new UserDTO(user.getId(), user.getUsername(), user.getPassword(), user.getSolvedPuzzles());
     }
 }

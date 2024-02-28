@@ -7,6 +7,8 @@ import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.security.jwt.JwtUtils;
 import com.codecool.puzzleshowdown.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,26 +54,43 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO){
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response){
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication); //jwt Token
+        String jwt = jwtUtils.generateJwtToken(authentication);
         User user = userService.getUser(jwtUtils.getUserNameFromJwtToken(jwt));
-        return ResponseEntity.ok(new UserLoginResponseDTO(user.getId(), user.username() , jwt, user.getImage()));
+
+        Cookie cookie = new Cookie("token", jwt);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(18400);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(new UserLoginResponseDTO(user.getId(), user.getUsername(), user.getImage(), user.getRating()));
     }
 
-//    @GetMapping("/profile/{userName}")
-//    public ResponseEntity<?> getUser(@PathVariable String userName){
-//        try{
-//            Optional<User> userData = userService.getUserData(userName);
-//            return ResponseEntity.ok(userData);
-//
-//        } catch (Exception e){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @GetMapping("/login")
+    public ResponseEntity<UserLoginResponseDTO> autoLogin(@CookieValue(value = "token") String jwt){
+        User user = userService.getUser(jwtUtils.getUserNameFromJwtToken(jwt));
+        return ResponseEntity.ok(new UserLoginResponseDTO(user.getId(), user.getUsername(), user.getImage(), user.getRating()));
+    }
+
+
+    @GetMapping("/profile/{userName}")
+
+    public ResponseEntity<?> getUser(@PathVariable String userName){
+
+        try{
+           User userData = userService.getUser(userName);
+            return ResponseEntity.ok(userData);
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+
+    }
 
     @PatchMapping("/rating/{userId}")
     public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
