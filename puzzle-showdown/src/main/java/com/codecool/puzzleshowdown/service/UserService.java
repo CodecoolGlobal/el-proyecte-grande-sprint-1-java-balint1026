@@ -1,6 +1,5 @@
 package com.codecool.puzzleshowdown.service;
 
-import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
 import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.custom_exception.*;
@@ -62,10 +61,11 @@ public class UserService {
 
     }
 
-    public List<UserLeaderBoard> getUsersByRoleSorted() {
-        List<UserLeaderBoard> usersByRating = userRepository.findByOrderByRatingDescUserNameAsc().stream()
-                .map(user -> new UserLeaderBoard(user.getRating(), user.getUsername(), user.getImage()))
+    public List<UserLeaderBoardDTO> getUsersByRoleSorted() {
+        List<UserLeaderBoardDTO> usersByRating = userRepository.findByOrderByRatingDescUserNameAsc().stream()
+                .map(user -> new UserLeaderBoardDTO(user.getRating(), user.getUsername(), user.getImage()))
                 .toList();
+        System.out.println(usersByRating.size());
         return usersByRating;
     }
 

@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/leaderboard")
-    public List<UserLeaderBoard> getLeaderBoard(){
+    public List<UserLeaderBoardDTO> getLeaderBoard(){
         return userService.getUsersByRoleSorted();
     }
 
