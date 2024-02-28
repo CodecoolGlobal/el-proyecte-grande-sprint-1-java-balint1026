@@ -2,11 +2,8 @@ package com.codecool.puzzleshowdown.service;
 
 import com.codecool.puzzleshowdown.custom_exception.NonExistingUserException;
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
-import com.codecool.puzzleshowdown.dto.user.UserDTO;
+import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.custom_exception.*;
-import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
-import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
-import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.repository.model.Role;
 import com.codecool.puzzleshowdown.repository.model.User;
@@ -15,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -60,6 +58,13 @@ public class UserService {
             throw new NullValueException();
         }
 
+    }
+
+    public List<UserLeaderBoard> getUsersByRoleSorted(){
+        List<UserLeaderBoard> usersByRating = userRepository.findByOrderByRatingDesc().stream()
+                .map(user -> new UserLeaderBoard(user.getRating(), user.username(), user.getImage()))
+                .toList();
+        return usersByRating;
     }
 
     private boolean emailValidator(String userAuthenticator){

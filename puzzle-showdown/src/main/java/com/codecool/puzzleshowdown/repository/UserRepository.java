@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUserName(String userName);
     Optional<User> findByEmailOrUserName(String email, String userName);
 
-    Optional<User> findByOrderByRatingDesc();
+    List<User> findByOrderByRatingDesc();
 
     @Transactional
     @Modifying
