@@ -46,7 +46,9 @@ public class RaceService {
                 activeRaces.get(raceId).players(),
                 activeRaces.get(raceId).spectators(),
                 activeRaces.get(raceId).timeframe(),
-                activeRaces.get(raceId).gameState()
+                activeRaces.get(raceId).gameState(),
+                activeRaces.get(raceId).first(),
+                activeRaces.get(raceId).step()
         );
     }
 
@@ -58,16 +60,26 @@ public class RaceService {
                 activeRaces.get(activeSpectates.get(spectateId)).players(),
                 activeRaces.get(activeSpectates.get(spectateId)).spectators(),
                 activeRaces.get(activeSpectates.get(spectateId)).timeframe(),
-                activeRaces.get(activeSpectates.get(spectateId)).gameState()
+                activeRaces.get(activeSpectates.get(spectateId)).gameState(),
+                activeRaces.get(activeSpectates.get(spectateId)).first(),
+                activeRaces.get(activeSpectates.get(spectateId)).step()
         );
     }
 
-    public void addPlayerToActiveRace(String raceId, WebSocketSession socketSession, String username) {
-        activeRaces.get(raceId).players().add(new PlayerInActiveRace(socketSession, username));
+    public void addPlayerToActiveRace(String raceId, WebSocketSession socketSession, String username, String userId) {
+        activeRaces.get(raceId).players().add(new PlayerInActiveRace(socketSession, username, userId));
     }
 
     public void startActiveRace(String raceId) {
         activeRaces.get(raceId).gameState().setPending(false);
+    }
+
+    public int getActiveRaceFirstPuzzle(String raceId) {
+        return activeRaces.get(raceId).first();
+    }
+
+    public int getActiveRacePuzzleStep(String raceId) {
+        return activeRaces.get(raceId).step();
     }
 
     public void uploadGame(List<Long> playersId, List<String> puzzlesId){

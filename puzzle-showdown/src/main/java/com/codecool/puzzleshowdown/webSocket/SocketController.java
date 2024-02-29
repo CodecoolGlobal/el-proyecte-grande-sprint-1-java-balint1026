@@ -48,10 +48,12 @@ public class SocketController extends TextWebSocketHandler {
                         raceId,
                         spectateId,
                         body.getString("username"),
-                        new HashSet<>(List.of(new PlayerInActiveRace(socketSession, body.getString("username")))),
+                        new HashSet<>(List.of(new PlayerInActiveRace(socketSession, body.getString("username"), body.getString("userId")))),
                         new HashSet<>(),
                         Integer.parseInt(body.getString("timeframe")),
-                        new GameState()
+                        new GameState(),
+                        rand.nextInt(100),
+                        rand.nextInt(15) + 5
                 );
 
                 raceService.addActiveRace(raceId, spectateId, newRace);
@@ -69,9 +71,9 @@ public class SocketController extends TextWebSocketHandler {
 
                 String usernamesToSend = "[";
                 for (PlayerInActiveRace player : raceService.getActiveRaceByRaceId(body.getString("raceId")).players()) {
-                    usernamesToSend += "\"" + player.username() + "\",";
+                    usernamesToSend += "[\"" + player.username() + "\", \"" + player.userId() + "\"],";
                 }
-                usernamesToSend = usernamesToSend.substring(0, usernamesToSend.length() - 2) + "\"]";
+                usernamesToSend = usernamesToSend.substring(0, usernamesToSend.length() - 1) + "]";
                 sendSocketMessage(socketSession, new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
                         "{\"players\": "+usernamesToSend+"}"
                 ));
@@ -88,9 +90,9 @@ public class SocketController extends TextWebSocketHandler {
                     break;
                 }
 
-                raceService.addPlayerToActiveRace(body.getString("raceId"), socketSession, body.getString("username"));
+                raceService.addPlayerToActiveRace(body.getString("raceId"), socketSession, body.getString("username"), body.getString("userId"));
                 broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
-                        "{\"username\": \""+body.getString("username")+"\"}"
+                        "{\"username\": \""+body.getString("username")+"\", \"userId\": \""+body.getString("userId")+"\"}"
                 ));
                 break;
 
@@ -110,7 +112,7 @@ public class SocketController extends TextWebSocketHandler {
                     public void run() {
                         try {
                             broadcastSocketMessageToPlayers(finalBody.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
-                                    "{\"startAt\": \""+System.currentTimeMillis()+"\", \"raceLength\": \""+raceService.getActiveRaceByRaceId(finalBody.getString("raceId")).timeframe()+"\"}"
+                                    "{\"startAt\": \""+System.currentTimeMillis()+"\", \"raceLength\": \""+raceService.getActiveRaceByRaceId(finalBody.getString("raceId")).timeframe()+"\", \"first\": \""+raceService.getActiveRaceFirstPuzzle(finalBody.getString("raceId"))+"\", \"step\": \""+raceService.getActiveRacePuzzleStep(finalBody.getString("raceId"))+"\"}"
                             ));
                         } catch (IOException e) {
                             throw new RuntimeException(e);
