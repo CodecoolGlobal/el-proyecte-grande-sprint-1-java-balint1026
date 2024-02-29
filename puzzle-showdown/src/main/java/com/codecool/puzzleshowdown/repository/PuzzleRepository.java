@@ -1,6 +1,7 @@
 package com.codecool.puzzleshowdown.repository;
 
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
+import org.springframework.data.domain.OffsetScrollPosition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,7 @@ public interface PuzzleRepository extends JpaRepository<Puzzle, String> {
     @Modifying
     @Query(value = "UPDATE Puzzle p SET p.popularity = p.popularity + :newValue WHERE p.puzzleid = :id")
     void updatePuzzleByPuzzleId(String id, int newValue);
+
+    @Query
+    Optional<Puzzle> findFirstByRatingIsGreaterThanOrderByRating(int minRating, OffsetScrollPosition scrollPosition);
 }
