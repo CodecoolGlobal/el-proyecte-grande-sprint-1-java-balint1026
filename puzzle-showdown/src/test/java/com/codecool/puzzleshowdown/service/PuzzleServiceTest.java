@@ -74,7 +74,7 @@ class PuzzleServiceTest {
     }
 
     @Test
-    void getHint() {
+    void getHint_ShouldReturnTheSecondHint_fromTheFirstPuzzle_ShouldReturn_a2() {
         //arrange
         Puzzle expectedPuzzle = new Puzzle();
         expectedPuzzle.setPuzzleid("#000");
