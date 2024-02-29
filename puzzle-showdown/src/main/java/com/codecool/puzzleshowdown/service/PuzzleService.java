@@ -33,7 +33,24 @@ public class PuzzleService{
                 puzzles.getRating(),
                 puzzles.getPopularity());
     }
-    private PuzzleDTO createPuzzleDTO(Puzzle puzzles){
+
+    public PuzzleDTO getFilteredRandomPuzzle(String username){
+        Optional<User> optionalUser = userRepository.findByUserName(username);
+        if (optionalUser.isPresent()){
+            User user = optionalUser.get();
+            List<String> solvedPuzzlesId = user.getSolvedPuzzles().stream()
+                    .map(Puzzle::getPuzzleid).toList();
+            System.out.println(solvedPuzzlesId);
+            Optional<Puzzle> optional = puzzleRepository.findFirstByPuzzleidNotIn(solvedPuzzlesId);
+            if (optional.isPresent()){
+                Puzzle puzzle = optional.get();
+                return puzzleDTOMapper(puzzle);
+            }
+        }
+        return null;
+    }
+
+    private PuzzleDTO puzzleDTOMapper(Puzzle puzzles){
         return new PuzzleDTO(
                 puzzles.getPuzzleid(),
                 puzzles.getFen(),
@@ -74,7 +91,7 @@ public class PuzzleService{
                 .filter(puzzle -> !user.getSolvedPuzzles().contains(puzzle.getPuzzleid()))
                 .filter(puzzle -> puzzle.getRating() >= min && puzzle.getRating() <= max).toList();
         Random random = new Random();
-        return createPuzzleDTO(filteredPuzzles.get(random.nextInt(filteredPuzzles.size())));
+        return puzzleDTOMapper(filteredPuzzles.get(random.nextInt(filteredPuzzles.size())));
     }
 
     public String getHint(String puzzleId, int step){

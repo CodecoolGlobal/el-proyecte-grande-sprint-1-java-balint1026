@@ -93,16 +93,19 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
+    @GetMapping("/statistics/{username}")
+    public Statistics getStatisticsByUser(@PathVariable String username){
+        return userService.getStatistics(username);
+    }
     @PatchMapping("/rating/{userId}")
     public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
         return userService.patchRating(userId, rating);
     }
 
-    @PutMapping("/savePuzzle/{userId}/{puzzleId}")
-    public void postPuzzleToUser( @PathVariable long userId, @PathVariable String puzzleId){
-        userService.savePuzzleToUser(userId, puzzleId);
+    @PutMapping("/savePuzzle/{username}/{puzzleId}")
+    public void postPuzzleToUser( @PathVariable String username, @PathVariable String puzzleId){
+        userService.savePuzzleToUser(username, puzzleId);
     }
 }
