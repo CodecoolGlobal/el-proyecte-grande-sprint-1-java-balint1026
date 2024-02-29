@@ -3,6 +3,7 @@ package com.codecool.puzzleshowdown.service;
 import com.codecool.puzzleshowdown.repository.PuzzleRepository;
 import com.codecool.puzzleshowdown.repository.UserRepository;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -13,6 +14,14 @@ import static org.mockito.Mockito.when;
 
 class PuzzleServiceTest {
 
+    private PuzzleService puzzleService;
+    private UserRepository userRepositoryMock = mock(UserRepository.class);
+    private PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
+    @BeforeEach
+    void setup(){
+        puzzleService = new PuzzleService(puzzleRepositoryMock, userRepositoryMock);
+    }
+
     @Test
     void isValidStep_withValidMove_shouldReturnTheNextMove_wouldBe_a4() {
         //arrange
@@ -21,12 +30,8 @@ class PuzzleServiceTest {
         expectedPuzzle.setMoves("a1 a2 a3 a4 a5");
         Optional<Puzzle> puzzle = Optional.of(expectedPuzzle);
 
-        PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
         when(puzzleRepositoryMock.findById("#000")).thenReturn(puzzle);
 
-        UserRepository userRepository = mock(UserRepository.class);
-
-        PuzzleService puzzleService = new PuzzleService(puzzleRepositoryMock, userRepository);
         //act
         String result = puzzleService.isValidStep("#000", "a3",2);
         String expected = "a4";
@@ -43,12 +48,8 @@ class PuzzleServiceTest {
         expectedPuzzle.setMoves("a1 a2 a3 a4 a5");
         Optional<Puzzle> puzzle = Optional.of(expectedPuzzle);
 
-        PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
         when(puzzleRepositoryMock.findById("#000")).thenReturn(puzzle);
 
-        UserRepository userRepository = mock(UserRepository.class);
-
-        PuzzleService puzzleService = new PuzzleService(puzzleRepositoryMock, userRepository);
         //act
         String result = puzzleService.isValidStep("#000", "b25",2);
         //assert
@@ -63,12 +64,8 @@ class PuzzleServiceTest {
         expectedPuzzle.setMoves("a1 a2 a3 a4 a5");
         Optional<Puzzle> puzzle = Optional.of(expectedPuzzle);
 
-        PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
         when(puzzleRepositoryMock.findById("#000")).thenReturn(puzzle);
 
-        UserRepository userRepository = mock(UserRepository.class);
-
-        PuzzleService puzzleService = new PuzzleService(puzzleRepositoryMock, userRepository);
         //act
         String result = puzzleService.isValidStep("#000", "a5",4);
         String expected = "win";
@@ -78,5 +75,17 @@ class PuzzleServiceTest {
 
     @Test
     void getHint() {
+        //arrange
+        Puzzle expectedPuzzle = new Puzzle();
+        expectedPuzzle.setPuzzleid("#000");
+        expectedPuzzle.setMoves("a1 a2 a3 a4 a5");
+        Optional<Puzzle> puzzle = Optional.of(expectedPuzzle);
+
+        when(puzzleRepositoryMock.findById("#000")).thenReturn(puzzle);
+
+        String result = puzzleService.getHint("#000",1);
+        String expected = "a2";
+
+        assertEquals(expected, result);
     }
 }
