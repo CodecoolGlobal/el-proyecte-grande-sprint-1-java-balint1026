@@ -36,6 +36,7 @@ class PuzzleServiceTest {
         String result = puzzleService.isValidStep("#000", "a3",2);
         String expected = "a4";
         //assert
+
         assertEquals(expected, result);
     }
 
