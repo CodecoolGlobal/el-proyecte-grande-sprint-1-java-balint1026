@@ -66,8 +66,8 @@ public class RaceService {
         );
     }
 
-    public void addPlayerToActiveRace(String raceId, WebSocketSession socketSession, String username) {
-        activeRaces.get(raceId).players().add(new PlayerInActiveRace(socketSession, username));
+    public void addPlayerToActiveRace(String raceId, WebSocketSession socketSession, String username, String userId) {
+        activeRaces.get(raceId).players().add(new PlayerInActiveRace(socketSession, username, userId));
     }
 
     public void startActiveRace(String raceId) {
