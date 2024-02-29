@@ -11,5 +11,7 @@ public record ActiveRace(
         Set<PlayerInActiveRace> players,
         Set<WebSocketSession> spectators,
         int timeframe,
-        GameState gameState
+        GameState gameState,
+        int first,
+        int step
 ) {}

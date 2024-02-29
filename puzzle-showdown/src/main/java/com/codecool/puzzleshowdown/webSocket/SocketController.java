@@ -51,7 +51,9 @@ public class SocketController extends TextWebSocketHandler {
                         new HashSet<>(List.of(new PlayerInActiveRace(socketSession, body.getString("username")))),
                         new HashSet<>(),
                         Integer.parseInt(body.getString("timeframe")),
-                        new GameState()
+                        new GameState(),
+                        rand.nextInt(100),
+                        rand.nextInt(15) + 5
                 );
 
                 raceService.addActiveRace(raceId, spectateId, newRace);
@@ -110,7 +112,7 @@ public class SocketController extends TextWebSocketHandler {
                     public void run() {
                         try {
                             broadcastSocketMessageToPlayers(finalBody.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
-                                    "{\"startAt\": \""+System.currentTimeMillis()+"\", \"raceLength\": \""+raceService.getActiveRaceByRaceId(finalBody.getString("raceId")).timeframe()+"\"}"
+                                    "{\"startAt\": \""+System.currentTimeMillis()+"\", \"raceLength\": \""+raceService.getActiveRaceByRaceId(finalBody.getString("raceId")).timeframe()+"\", \"first\": \""+raceService.getActiveRaceFirstPuzzle(finalBody.getString("raceId"))+"\", \"step\": \""+raceService.getActiveRacePuzzleStep(finalBody.getString("raceId"))+"\"}"
                             ));
                         } catch (IOException e) {
                             throw new RuntimeException(e);

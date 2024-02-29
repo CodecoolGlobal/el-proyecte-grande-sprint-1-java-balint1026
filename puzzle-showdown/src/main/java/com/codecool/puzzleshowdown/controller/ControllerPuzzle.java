@@ -1,6 +1,7 @@
 package com.codecool.puzzleshowdown.controller;
 
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
+import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.service.PuzzleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class ControllerPuzzle {
     public PuzzleDTO getRandomPuzzleForUser(@PathVariable long userId,@RequestParam int min, @RequestParam int max){
         return puzzleService.getPuzzleForUser(userId, min, max);
     }
+
     @GetMapping("/valid/{puzzleId}/{move}/{step}")
     public String checkValidMove(@PathVariable String puzzleId, @PathVariable String move, @PathVariable int step){
         return puzzleService.isValidStep(puzzleId, move, step);
@@ -34,6 +36,10 @@ public class ControllerPuzzle {
         return puzzleService.getHint(puzzleId, moveCount);
     }
 
+    @GetMapping("/next/{first}/{step}/{count}")
+    public PuzzleDTO getNextPuzzleForRace(@PathVariable int first, @PathVariable int step, @PathVariable int count) {
+        return puzzleService.getNextPuzzleForRace(first - 1, step, count);
+    }
 
     @PatchMapping("/{puzzleId}/popularity/{vote}")
     public void updatePopularity(@PathVariable String puzzleId, @PathVariable int vote){

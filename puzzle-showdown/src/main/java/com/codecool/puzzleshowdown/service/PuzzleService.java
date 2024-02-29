@@ -6,6 +6,7 @@ import com.codecool.puzzleshowdown.repository.model.Puzzle;
 import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ScrollPosition;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -92,5 +93,19 @@ public class PuzzleService{
     private String[] getMoves(String id){
         Puzzle puzzle = getPuzzleById(id);
         return puzzle.getMoves().split(" ");
+    }
+
+    public PuzzleDTO getNextPuzzleForRace(int first, int step, int count) {
+        Optional<Puzzle> optionalPuzzle = puzzleRepository.findFirstByRatingIsGreaterThanOrderByRating(0, ScrollPosition.offset(((long) step * count) + first));
+        if (optionalPuzzle.isPresent()){
+            Puzzle puzzle = optionalPuzzle.get();
+            return new PuzzleDTO(
+                    puzzle.getPuzzleid(),
+                    puzzle.getFen(),
+                    puzzle.getMoves().split(" ")[0],
+                    puzzle.getRating(),
+                    puzzle.getPopularity());
+        }
+        return null;
     }
 }
