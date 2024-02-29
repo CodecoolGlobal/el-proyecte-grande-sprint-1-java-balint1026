@@ -10,5 +10,6 @@ public record ActiveRace(
         String hostUsername,
         Set<PlayerInActiveRace> players,
         Set<WebSocketSession> spectators,
-        int timeframe
+        int timeframe,
+        GameState gameState
 ) {}

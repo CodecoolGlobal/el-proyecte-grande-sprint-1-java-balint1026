@@ -1,13 +1,11 @@
 package com.codecool.puzzleshowdown.webSocket;
 
 import java.io.IOException;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import com.codecool.puzzleshowdown.service.RaceService;
 import com.codecool.puzzleshowdown.stateFul.ActiveRace;
+import com.codecool.puzzleshowdown.stateFul.GameState;
 import com.codecool.puzzleshowdown.stateFul.PlayerInActiveRace;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -16,8 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import static java.lang.Integer.parseInt;
 
 @Component
 public class SocketController extends TextWebSocketHandler {
@@ -54,13 +50,14 @@ public class SocketController extends TextWebSocketHandler {
                         body.getString("username"),
                         new HashSet<>(List.of(new PlayerInActiveRace(socketSession, body.getString("username")))),
                         new HashSet<>(),
-                        Integer.parseInt(body.getString("timeframe"))
+                        Integer.parseInt(body.getString("timeframe")),
+                        new GameState()
                 );
 
                 raceService.addActiveRace(raceId, spectateId, newRace);
 
                 sendSocketMessage(socketSession, new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
-                        "{\"raceId\": "+newRace.raceId()+", \"spectateId\": "+newRace.spectateId()+"}"
+                        "{\"raceId\": \""+newRace.raceId()+"\", \"spectateId\": \""+newRace.spectateId()+"\"}"
                 ));
                 break;
 
@@ -86,10 +83,41 @@ public class SocketController extends TextWebSocketHandler {
                     break;
                 }
 
+                if (!raceService.getActiveRaceByRaceId(body.getString("raceId")).gameState().isPending()) {
+                    throwError(socketSession);
+                    break;
+                }
+
                 raceService.addPlayerToActiveRace(body.getString("raceId"), socketSession, body.getString("username"));
                 broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
                         "{\"username\": \""+body.getString("username")+"\"}"
                 ));
+                break;
+
+            case "startRace":
+                if (!raceService.isRaceIdValid(body.getString("raceId"))) {
+                    throwError(socketSession);
+                    break;
+                }
+
+                raceService.startActiveRace(body.getString("raceId"));
+
+                broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO("startCountdown", request.get("identifier").toString(), "{}"));
+
+                JSONObject finalBody = body;
+                new Timer(true).schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            broadcastSocketMessageToPlayers(finalBody.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
+                                    "{\"startAt\": \""+System.currentTimeMillis()+"\", \"raceLength\": \""+raceService.getActiveRaceByRaceId(finalBody.getString("raceId")).timeframe()+"\"}"
+                            ));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }, 5000);
+
                 break;
         }
     }
