@@ -87,8 +87,8 @@ public class UserService {
     public boolean patchRating(long userId, int rating) {
         return userRepository.updateRating(userId, rating);
     }
-    public void savePuzzleToUser(long userId, String puzzleId) {
-        User user = getUser(userId);
+    public void savePuzzleToUser(String username, String puzzleId) {
+        User user = getUser(username);
         Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
         if (!user.getSolvedPuzzles().contains(puzzle)){
             user.getSolvedPuzzles().add(puzzle);
@@ -98,5 +98,10 @@ public class UserService {
     public UserDTO getUserById(long id){
         User user = getUser(id);
         return new UserDTO(user.getId(), user.getUsername(), user.getPassword(), user.getSolvedPuzzles());
+    }
+
+    public Statistics getStatistics(String username) {
+        User user = getUser(username);
+        return new Statistics(user.getSolvedPuzzles().size());
     }
 }
