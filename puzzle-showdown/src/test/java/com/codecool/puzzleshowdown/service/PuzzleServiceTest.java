@@ -88,4 +88,20 @@ class PuzzleServiceTest {
 
         assertEquals(expected, result);
     }
+
+    @Test
+    void getHint_ShouldReturnEmptyString_IfStepCountLargerThanAvaibleSteps() {
+        //arrange
+        Puzzle expectedPuzzle = new Puzzle();
+        expectedPuzzle.setPuzzleid("#000");
+        expectedPuzzle.setMoves("a1 a2 a3 a4 a5");
+        Optional<Puzzle> puzzle = Optional.of(expectedPuzzle);
+
+        when(puzzleRepositoryMock.findById("#000")).thenReturn(puzzle);
+
+        String result = puzzleService.getHint("#000",10);
+        String expected = "";
+
+        assertEquals(expected, result);
+    }
 }
