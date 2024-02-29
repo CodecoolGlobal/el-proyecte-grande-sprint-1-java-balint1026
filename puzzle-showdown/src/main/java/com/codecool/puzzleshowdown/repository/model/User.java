@@ -28,7 +28,7 @@ public class User {
     private int rating;
     @Column(columnDefinition = "TEXT")
     private String image;
-    @OneToMany
+    @ManyToMany
     private List<Puzzle> solvedPuzzles;
 
 
