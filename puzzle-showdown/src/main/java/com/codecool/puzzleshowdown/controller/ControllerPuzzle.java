@@ -26,6 +26,11 @@ public class ControllerPuzzle {
         return puzzleService.getPuzzleForUser(userId, min, max);
     }
 
+    @GetMapping("/new/{username}")
+    public PuzzleDTO getNewPuzzleForUser(@PathVariable String username){
+        return puzzleService.getFilteredRandomPuzzle(username);
+    }
+
     @GetMapping("/valid/{puzzleId}/{move}/{step}")
     public String checkValidMove(@PathVariable String puzzleId, @PathVariable String move, @PathVariable int step){
         return puzzleService.isValidStep(puzzleId, move, step);

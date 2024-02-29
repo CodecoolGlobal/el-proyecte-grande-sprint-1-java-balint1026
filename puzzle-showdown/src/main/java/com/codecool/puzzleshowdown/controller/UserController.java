@@ -1,9 +1,6 @@
 package com.codecool.puzzleshowdown.controller;
 
-import com.codecool.puzzleshowdown.dto.user.UserDTO;
-import com.codecool.puzzleshowdown.dto.user.UserLoginDTO;
-import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
-import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
+import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.security.jwt.JwtUtils;
 import com.codecool.puzzleshowdown.service.UserService;
@@ -15,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")
@@ -32,6 +31,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserDTO getUserById(@PathVariable long userId){
         return userService.getUserById(userId);
+    }
+
+    @GetMapping("/leaderboard")
+    public List<UserLeaderBoardDTO> getLeaderBoard(){
+        return userService.getUsersByRoleSorted();
     }
 
 //    @PostMapping("/registration")
@@ -89,16 +93,19 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 
+    @GetMapping("/statistics/{username}")
+    public Statistics getStatisticsByUser(@PathVariable String username){
+        return userService.getStatistics(username);
+    }
     @PatchMapping("/rating/{userId}")
     public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
         return userService.patchRating(userId, rating);
     }
 
-    @PutMapping("/savePuzzle/{userId}/{puzzleId}")
-    public void postPuzzleToUser( @PathVariable long userId, @PathVariable String puzzleId){
-        userService.savePuzzleToUser(userId, puzzleId);
+    @PutMapping("/savePuzzle/{username}/{puzzleId}")
+    public void postPuzzleToUser( @PathVariable String username, @PathVariable String puzzleId){
+        userService.savePuzzleToUser(username, puzzleId);
     }
 }

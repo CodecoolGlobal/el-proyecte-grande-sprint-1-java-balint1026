@@ -1,7 +1,7 @@
 package com.codecool.puzzleshowdown.service;
 
 import com.codecool.puzzleshowdown.custom_exception.NullValueException;
-import com.codecool.puzzleshowdown.dto.user.UserDTO;
+import com.codecool.puzzleshowdown.dto.user.*;
 import com.codecool.puzzleshowdown.custom_exception.*;
 import com.codecool.puzzleshowdown.dto.user.UserLoginResponseDTO;
 import com.codecool.puzzleshowdown.dto.user.NewUserDTO;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -60,7 +61,15 @@ public class UserService {
 
     }
 
-    private boolean emailValidator(String userAuthenticator){
+    public List<UserLeaderBoardDTO> getUsersByRoleSorted() {
+        List<UserLeaderBoardDTO> usersByRating = userRepository.findByOrderByRatingDescUserNameAsc().stream()
+                .map(user -> new UserLeaderBoardDTO(user.getRating(), user.getUsername(), user.getImage()))
+                .toList();
+        System.out.println(usersByRating.size());
+        return usersByRating;
+    }
+
+    private boolean emailValidator(String userAuthenticator) {
         String emailRegex = ".+\\@.+\\..+";
         return Pattern.compile(emailRegex).matcher(userAuthenticator).matches();
     }
@@ -69,6 +78,7 @@ public class UserService {
         Optional<User> respond = userRepository.findById(id);
         return respond.orElse(null);
     }
+
     public User getUser(String userName) {
         Optional<User> respond = userRepository.findByUserName(userName);
         return respond.orElse(null);
@@ -77,8 +87,8 @@ public class UserService {
     public boolean patchRating(long userId, int rating) {
         return userRepository.updateRating(userId, rating);
     }
-    public void savePuzzleToUser(long userId, String puzzleId) {
-        User user = getUser(userId);
+    public void savePuzzleToUser(String username, String puzzleId) {
+        User user = getUser(username);
         Puzzle puzzle = puzzleService.getPuzzleById(puzzleId);
         if (!user.getSolvedPuzzles().contains(puzzle)){
             user.getSolvedPuzzles().add(puzzle);
@@ -88,5 +98,10 @@ public class UserService {
     public UserDTO getUserById(long id){
         User user = getUser(id);
         return new UserDTO(user.getId(), user.getUsername(), user.getPassword(), user.getSolvedPuzzles());
+    }
+
+    public Statistics getStatistics(String username) {
+        User user = getUser(username);
+        return new Statistics(user.getSolvedPuzzles().size());
     }
 }

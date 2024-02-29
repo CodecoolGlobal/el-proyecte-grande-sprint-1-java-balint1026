@@ -14,6 +14,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByUserName(String userName);
     Optional<User> findByEmailOrUserName(String email, String userName);
+
+    List<User> findByOrderByRatingDescUserNameAsc();
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE User u SET u.rating = u.rating + :newRating WHERE u.id = :userId")
