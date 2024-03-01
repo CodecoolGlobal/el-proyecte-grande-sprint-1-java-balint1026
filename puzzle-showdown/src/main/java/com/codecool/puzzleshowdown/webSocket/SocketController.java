@@ -64,11 +64,6 @@ public class SocketController extends TextWebSocketHandler {
                 break;
 
             case "getPlayersInRace":
-                if (!raceService.isRaceIdValid(body.getString("raceId"))) {
-                    throwError(socketSession);
-                    break;
-                }
-
                 String usernamesToSend = "[";
                 for (PlayerInActiveRace player : raceService.getActiveRaceByRaceId(body.getString("raceId")).players()) {
                     usernamesToSend += "[\"" + player.username() + "\", \"" + player.userId() + "\"],";
@@ -119,7 +114,12 @@ public class SocketController extends TextWebSocketHandler {
                         }
                     }
                 }, 5000);
+                break;
 
+            case "completeRacePuzzle":
+                broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
+                        "{\"success\": \""+body.getString("success")+"\", \"userId\": \""+body.getString("userId")+"\"}"
+                ));
                 break;
         }
     }
