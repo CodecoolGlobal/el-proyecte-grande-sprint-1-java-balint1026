@@ -1,9 +1,9 @@
 package com.codecool.puzzleshowdown.service;
 
+import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import com.codecool.puzzleshowdown.repository.PuzzleRepository;
 import com.codecool.puzzleshowdown.repository.UserRepository;
 import com.codecool.puzzleshowdown.repository.model.Puzzle;
-import com.codecool.puzzleshowdown.dto.puzzle.PuzzleDTO;
 import com.codecool.puzzleshowdown.repository.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.ScrollPosition;
@@ -14,9 +14,10 @@ import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class PuzzleService{
+public class PuzzleService {
     private final PuzzleRepository puzzleRepository;
     private final UserRepository userRepository;
+
     @Autowired
     public PuzzleService(PuzzleRepository puzzleRepository, UserRepository userRepository) {
         this.puzzleRepository = puzzleRepository;
@@ -35,15 +36,15 @@ public class PuzzleService{
                 puzzles.getPopularity());
     }
 
-    public PuzzleDTO getFilteredRandomPuzzle(String username){
+    public PuzzleDTO getFilteredRandomPuzzle(String username) {
         Optional<User> optionalUser = userRepository.findByUserName(username);
-        if (optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             List<String> solvedPuzzlesId = user.getSolvedPuzzles().stream()
                     .map(Puzzle::getPuzzleid).toList();
             System.out.println(solvedPuzzlesId);
             Optional<Puzzle> optional = puzzleRepository.findFirstByPuzzleidNotIn(solvedPuzzlesId);
-            if (optional.isPresent()){
+            if (optional.isPresent()) {
                 Puzzle puzzle = optional.get();
                 return puzzleDTOMapper(puzzle);
             }
@@ -51,7 +52,7 @@ public class PuzzleService{
         return null;
     }
 
-    private PuzzleDTO puzzleDTOMapper(Puzzle puzzles){
+    private PuzzleDTO puzzleDTOMapper(Puzzle puzzles) {
         return new PuzzleDTO(
                 puzzles.getPuzzleid(),
                 puzzles.getFen(),
@@ -64,15 +65,15 @@ public class PuzzleService{
         puzzleRepository.updatePuzzleByPuzzleId(puzzleId, vote);
     }
 
-    private boolean isInIndex(String[] array, int index){
+    private boolean isInIndex(String[] array, int index) {
         return index < array.length && index >= 0;
     }
 
     public String isValidStep(String puzzleId, String move, int step) {
         String[] moves = getMoves(puzzleId);
-        if (isInIndex(moves, step)){
-            if(moves[step].equals(move)){
-                if (step + 1 == moves.length){
+        if (isInIndex(moves, step)) {
+            if (moves[step].equals(move)) {
+                if (step + 1 == moves.length) {
                     return "win";
                 }
                 return moves[step + 1];
@@ -81,9 +82,9 @@ public class PuzzleService{
         return null;
     }
 
-    public PuzzleDTO getPuzzleForUser(long userId, int min, int max){
+    public PuzzleDTO getPuzzleForUser(long userId, int min, int max) {
         Optional<User> respond = userRepository.findById(userId);
-        if (respond.isEmpty()){
+        if (respond.isEmpty()) {
             return null;
         }
         User user = respond.get();
@@ -95,26 +96,26 @@ public class PuzzleService{
         return puzzleDTOMapper(filteredPuzzles.get(random.nextInt(filteredPuzzles.size())));
     }
 
-    public String getHint(String puzzleId, int step){
+    public String getHint(String puzzleId, int step) {
         String[] moves = getMoves(puzzleId);
         if (step < moves.length && step >= 0)
-            return moves[step].substring(0,2);
+            return moves[step].substring(0, 2);
         return "";
     }
 
-    public Puzzle getPuzzleById(String id){
+    public Puzzle getPuzzleById(String id) {
         Optional<Puzzle> response = puzzleRepository.findById(id);
         return response.orElse(null);
     }
 
-    private String[] getMoves(String id){
+    private String[] getMoves(String id) {
         Puzzle puzzle = getPuzzleById(id);
         return puzzle.getMoves().split(" ");
     }
 
     public PuzzleDTO getNextPuzzleForRace(int first, int step, int count) {
         Optional<Puzzle> optionalPuzzle = puzzleRepository.findFirstByRatingIsGreaterThanOrderByRating(0, ScrollPosition.offset(((long) step * count) + first));
-        if (optionalPuzzle.isPresent()){
+        if (optionalPuzzle.isPresent()) {
             Puzzle puzzle = optionalPuzzle.get();
             return new PuzzleDTO(
                     puzzle.getPuzzleid(),
