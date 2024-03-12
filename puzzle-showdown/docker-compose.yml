@@ -10,7 +10,7 @@ services:
     depends_on:
       - db
     environment:
-      DB_URL: ${DATABASE_URL}
+      DB_URL: jdbc:postgresql://db:5432/puzzle
       DB_USERNAME: ${DATABASE_USER}
       DB_PASSWORD: ${DATABASE_PASSWORD}
   db:
