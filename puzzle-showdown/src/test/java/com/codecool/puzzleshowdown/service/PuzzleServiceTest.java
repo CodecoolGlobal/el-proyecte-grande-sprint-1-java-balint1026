@@ -15,8 +15,8 @@ import static org.mockito.Mockito.when;
 class PuzzleServiceTest {
 
     private PuzzleService puzzleService;
-    private UserRepository userRepositoryMock = mock(UserRepository.class);
-    private PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
+    private final UserRepository userRepositoryMock = mock(UserRepository.class);
+    private final PuzzleRepository puzzleRepositoryMock = mock(PuzzleRepository.class);
     @BeforeEach
     void setup(){
         puzzleService = new PuzzleService(puzzleRepositoryMock, userRepositoryMock);
@@ -91,7 +91,7 @@ class PuzzleServiceTest {
     }
 
     @Test
-    void getHint_ShouldReturnEmptyString_IfStepCountLargerThanAvaibleSteps() {
+    void getHint_ShouldReturnEmptyString_IfStepCountLargerThanAvailableSteps() {
         //arrange
         Puzzle expectedPuzzle = new Puzzle();
         expectedPuzzle.setPuzzleid("#000");

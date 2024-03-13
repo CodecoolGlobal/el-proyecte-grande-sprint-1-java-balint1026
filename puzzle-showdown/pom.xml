@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.codecool</groupId>
 	<artifactId>puzzle-showdown</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.4.1-SNAPSHOT</version>
 	<name>puzzle-showdown</name>
 	<description>This will be a chess puzzle project</description>
 	<properties>

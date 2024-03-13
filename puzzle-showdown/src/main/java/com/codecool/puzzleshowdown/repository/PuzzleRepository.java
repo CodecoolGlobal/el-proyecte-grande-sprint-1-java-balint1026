@@ -17,6 +17,7 @@ public interface PuzzleRepository extends JpaRepository<Puzzle, String> {
     Optional<Puzzle> getRandomPuzzle(int min, int max);
 
     Optional<Puzzle> findFirstByPuzzleidNotIn(List<String> puzzleIdList);
+
     @Transactional
     @Modifying
     @Query(value = "UPDATE Puzzle p SET p.popularity = p.popularity + :newValue WHERE p.puzzleid = :id")

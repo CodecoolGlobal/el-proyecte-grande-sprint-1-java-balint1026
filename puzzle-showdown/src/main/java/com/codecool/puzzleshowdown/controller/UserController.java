@@ -29,27 +29,18 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDTO getUserById(@PathVariable long userId){
+    public UserDTO getUserById(@PathVariable long userId) {
         return userService.getUserById(userId);
     }
 
     @GetMapping("/leaderboard")
-    public List<UserLeaderBoardDTO> getLeaderBoard(){
+    public List<UserLeaderBoardDTO> getLeaderBoard() {
         return userService.getUsersByRoleSorted();
     }
 
-//    @PostMapping("/registration")
-//    public ResponseEntity<?> saveUser(@RequestBody NewUserDTO userRegistrationDTO){
-//        try{
-//            UserLoginResponseDTO userResponse = userService.saveUser(userRegistrationDTO);
-//            return ResponseEntity.ok(userResponse);
-//        } catch (Exception e){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
     @PostMapping("/registration")
     public ResponseEntity<?> createUser(@RequestBody NewUserDTO newUserDTO) {
-        try{
+        try {
             userService.saveUser(newUserDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -58,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response){
+    public ResponseEntity<?> loginUser(@RequestBody UserLoginDTO userLoginDTO, HttpServletResponse response) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(userLoginDTO.username(), userLoginDTO.password()));
 
@@ -77,35 +68,34 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> autoLogin(@CookieValue(value = "token") String jwt){
+    public ResponseEntity<UserLoginResponseDTO> autoLogin(@CookieValue(value = "token") String jwt) {
         User user = userService.getUser(jwtUtils.getUserNameFromJwtToken(jwt));
         return ResponseEntity.ok(new UserLoginResponseDTO(user.getId(), user.getUsername(), user.getImage(), user.getRating()));
     }
 
 
     @GetMapping("/profile/{userName}")
-
-    public ResponseEntity<?> getUser(@PathVariable String userName){
-
-        try{
-           User userData = userService.getUser(userName);
+    public ResponseEntity<?> getUser(@PathVariable String userName) {
+        try {
+            User userData = userService.getUser(userName);
             return ResponseEntity.ok(userData);
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @GetMapping("/statistics/{username}")
-    public Statistics getStatisticsByUser(@PathVariable String username){
+    public Statistics getStatisticsByUser(@PathVariable String username) {
         return userService.getStatistics(username);
     }
+
     @PatchMapping("/rating/{userId}")
-    public boolean patchUserRating(@PathVariable long userId,@RequestParam int rating){
+    public boolean patchUserRating(@PathVariable long userId, @RequestParam int rating) {
         return userService.patchRating(userId, rating);
     }
 
     @PutMapping("/savePuzzle/{username}/{puzzleId}")
-    public void postPuzzleToUser( @PathVariable String username, @PathVariable String puzzleId){
+    public void postPuzzleToUser(@PathVariable String username, @PathVariable String puzzleId) {
         userService.savePuzzleToUser(username, puzzleId);
     }
 }
