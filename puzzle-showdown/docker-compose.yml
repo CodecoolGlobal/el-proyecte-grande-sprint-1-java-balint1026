@@ -3,8 +3,6 @@ version : "3.8"
 services:
   puzzle-showdown:
     image: puzzle-showdown:latest
-    build:
-      context: .
     ports:
       - '8080:8080'
     depends_on:
@@ -19,3 +17,9 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: puzzle
+  puzzle-showdown-frontend:
+    image: puzzle-showdown-frontend:latest
+    depends_on:
+      - puzzle-showdown
+    ports:
+      - '80:80'
