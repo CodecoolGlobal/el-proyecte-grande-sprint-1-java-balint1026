@@ -2,23 +2,15 @@ version : "3.8"
 
 services:
   puzzle-showdown:
-    image: puzzle-showdown:latest
+    image: puzzle_showdown:latest
     ports:
       - '8080:8080'
-    depends_on:
-      - db
     environment:
-      DB_URL: jdbc:postgresql://db:5432/puzzle
-      DB_USERNAME: ${DATABASE_USER}
-      DB_PASSWORD: ${DATABASE_PASSWORD}
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: puzzle
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
   puzzle-showdown-frontend:
-    image: puzzle-showdown-frontend:latest
+    image: puzzle_showdown_frontend:latest
     depends_on:
       - puzzle-showdown
     ports:
