@@ -40,10 +40,12 @@ public class PuzzleService {
         Optional<User> optionalUser = userRepository.findByUserName(username);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            System.out.println(user.getId() + "" + user.getUsername());
             List<String> solvedPuzzlesId = user.getSolvedPuzzles().stream()
                     .map(Puzzle::getPuzzleid).toList();
             System.out.println(solvedPuzzlesId);
-            Optional<Puzzle> optional = puzzleRepository.findFirstByPuzzleidNotIn(solvedPuzzlesId);
+            Optional<Puzzle> optional = puzzleRepository.findPuzzleByPuzzleidNotIn(solvedPuzzlesId);
+            System.out.println(optional);
             if (optional.isPresent()) {
                 Puzzle puzzle = optional.get();
                 return puzzleDTOMapper(puzzle);

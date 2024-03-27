@@ -2,11 +2,15 @@ package com.codecool.puzzleshowdown.webSocket;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.codecool.puzzleshowdown.repository.model.User;
 import com.codecool.puzzleshowdown.service.RaceService;
+import com.codecool.puzzleshowdown.service.UserService;
 import com.codecool.puzzleshowdown.stateFul.ActiveRace;
 import com.codecool.puzzleshowdown.stateFul.GameState;
 import com.codecool.puzzleshowdown.stateFul.PlayerInActiveRace;
+import com.codecool.puzzleshowdown.utils.EloCalculator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.json.JSONObject;
@@ -22,8 +26,11 @@ public class SocketController extends TextWebSocketHandler {
 
     private final RaceService raceService;
 
-    public SocketController(RaceService raceService) {
+    private final UserService userService;
+
+    public SocketController(RaceService raceService, UserService userService) {
         this.raceService = raceService;
+        this.userService = userService;
     }
 
     public void handleTextMessage(WebSocketSession socketSession, TextMessage input) throws IOException {
@@ -120,6 +127,33 @@ public class SocketController extends TextWebSocketHandler {
                 broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(),
                         "{\"success\": \""+body.getString("success")+"\", \"userId\": \""+body.getString("userId")+"\"}"
                 ));
+                break;
+
+            case "handleRaceEnd":
+                //sendSocketMessage(socketSession, new SocketDTO(request.getString("endpoint"), request.get("identifier").toString(), "{\"valami\": \"semmi\"}"));
+                if (raceService.isRaceOver(body.getString("raceId"))) {
+                    break;
+                }
+                raceService.setRaceOver(body.getString("raceId"));
+               String[] userIdString = body.getString("names").split("&");
+               long[] userIdLong = new long[userIdString.length];
+                for (int i = 0; i < userIdString.length;i++) {
+                    userIdLong[i] = Long.parseLong(userIdString[i]);
+                }
+
+               double[] ratings = new double[userIdLong.length];
+               User[] users = new User[userIdLong.length];
+                System.out.println(Arrays.toString(userIdLong));
+               for (int i = 0; i < userIdLong.length; i++) {
+                   users[i] = userService.getUser(userIdLong[i]);
+                   ratings[i] = users[i].getRating();
+               }
+                double[] newRatings = EloCalculator.calculate(ratings);
+                for (int i = 0; i < newRatings.length; i++) {
+                    userService.patchRating(userIdLong[i], (int) newRatings[i]);
+                    System.out.println(newRatings[i]);
+                }
+                broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO("notifyGameOver", "0", "{}"));
                 break;
         }
     }

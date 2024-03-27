@@ -103,4 +103,11 @@ public class RaceService {
         }
         return users;
     }
+    public boolean isRaceOver(String raceId){
+        return !activeRaces.get(raceId).gameState().isRaceActive();
+    }
+
+    public void setRaceOver(String raceId){
+        activeRaces.get(raceId).gameState().setRaceActive(false);
+    }
 }

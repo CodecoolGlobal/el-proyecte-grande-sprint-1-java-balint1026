@@ -19,11 +19,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByOrderByRatingDescUserNameAsc();
 
-    @Transactional
-    @Modifying
-    @Query(value = "UPDATE User u SET u.rating = u.rating + :newRating WHERE u.id = :userId")
-    boolean updateRating(long userId, int newRating);
-
-    @Query(value = "UPDATE User u Set u.solvedPuzzles = :puzzles WHERE u.id = :userId")
-    boolean insertPuzzle(List<Puzzle> puzzles, long userId);
 }
