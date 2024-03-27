@@ -85,7 +85,9 @@ public class UserService {
     }
 
     public void patchRating(long userId, int rating) {
-         userRepository.updateRating(userId, rating);
+        User user = getUser(userId);
+        user.setRating(rating);
+        userRepository.save(user);
     }
     public void savePuzzleToUser(String username, String puzzleId) {
         User user = getUser(username);
