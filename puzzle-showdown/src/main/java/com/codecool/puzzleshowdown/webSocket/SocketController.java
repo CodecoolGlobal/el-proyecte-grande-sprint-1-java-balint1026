@@ -150,8 +150,8 @@ public class SocketController extends TextWebSocketHandler {
                }
                 double[] newRatings = EloCalculator.calculate(ratings);
                 for (int i = 0; i < newRatings.length; i++) {
-
-                 //   userService.patchRating(userIdLong[i], (int) newRatings[i]);
+                    userService.patchRating(userIdLong[i], (int) newRatings[i]);
+                    System.out.println(newRatings[i]);
                 }
                 broadcastSocketMessageToPlayers(body.getString("raceId"), new SocketDTO("notifyGameOver", "0", "{}"));
                 break;
