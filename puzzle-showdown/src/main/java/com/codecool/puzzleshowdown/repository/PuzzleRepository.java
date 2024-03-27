@@ -16,7 +16,7 @@ public interface PuzzleRepository extends JpaRepository<Puzzle, String> {
     @Query(value = "SELECT p FROM Puzzle AS p where p.rating between :min and :max ORDER BY RANDOM() limit 1")
     Optional<Puzzle> getRandomPuzzle(int min, int max);
 
-    Optional<Puzzle> findFirstByPuzzleidNotIn(List<String> puzzleIdList);
+    Optional<Puzzle> findPuzzleByPuzzleidNotIn(List<String> puzzleIdList);
 
     @Transactional
     @Modifying

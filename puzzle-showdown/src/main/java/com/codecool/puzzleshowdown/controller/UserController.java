@@ -90,8 +90,8 @@ public class UserController {
     }
 
     @PatchMapping("/rating/{userId}")
-    public boolean patchUserRating(@PathVariable long userId, @RequestParam int rating) {
-        return userService.patchRating(userId, rating);
+    public void patchUserRating(@PathVariable long userId, @RequestParam int rating) {
+         userService.patchRating(userId, rating);
     }
 
     @PutMapping("/savePuzzle/{username}/{puzzleId}")
