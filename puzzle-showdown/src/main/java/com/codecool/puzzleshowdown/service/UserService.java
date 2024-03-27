@@ -84,8 +84,10 @@ public class UserService {
         return respond.orElse(null);
     }
 
-    public boolean patchRating(long userId, int rating) {
-        return userRepository.updateRating(userId, rating);
+    public void patchRating(long userId, int rating) {
+        User user = getUser(userId);
+        user.setRating(rating);
+        userRepository.save(user);
     }
     public void savePuzzleToUser(String username, String puzzleId) {
         User user = getUser(username);

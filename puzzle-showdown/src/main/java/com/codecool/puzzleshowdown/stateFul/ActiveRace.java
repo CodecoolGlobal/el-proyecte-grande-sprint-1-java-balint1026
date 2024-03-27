@@ -14,4 +14,5 @@ public record ActiveRace(
         GameState gameState,
         int first,
         int step
+
 ) {}
