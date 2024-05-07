@@ -1,4 +1,6 @@
+
 # PuzzleShowdown
+
 
 ### This project is deployed and can be accessed at http://www.puzzleshowdown.xyz
 
@@ -14,6 +16,9 @@
 - Play chess puzzles solo or against friends.
 - Real-time gameplay experience.
 - Easy-to-use interface built with React.
+
+  <img width="913" alt="ps_readme_2" src="https://github.com/CodecoolGlobal/el-proyecte-grande-sprint-1-java-balint1026/assets/130932233/f62e2083-518d-471b-aede-00fa98318b81">
+  <img width="915" alt="ps_readme_1" src="https://github.com/CodecoolGlobal/el-proyecte-grande-sprint-1-java-balint1026/assets/130932233/f6db0d65-931d-47ac-90d2-5f615c195d57">
 
 ## Prerequisites
 
