@@ -40,7 +40,7 @@ Before running the project, make sure you have the following environment variabl
 
 ## Setup Instructions
 
-To set up and run the Chess Puzzle Project locally, follow these steps:
+To set up and run the project locally, follow these steps:
 
 1. Clone the repository to your local machine.
    git clone https://github.com/CodeCoolGlobal/el-proyecte-grande-sprint-1-java-balint1026.git
